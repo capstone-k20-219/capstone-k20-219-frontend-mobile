@@ -26,6 +26,6 @@ export const colors = {
   separator: palette.neutral200,
   error: palette.angry500,
   errorBackground: palette.angry100,
-  white: "#000000",
-  black: "#FFFFFF",
+  white: "#FFFFFF",
+  black: "#000000",
 }

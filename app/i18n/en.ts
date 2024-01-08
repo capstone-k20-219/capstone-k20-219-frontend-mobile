@@ -71,6 +71,7 @@ const en = {
   booking: "Booking",
   checkout: "Checkout",
   more: "More",
+  service: "Service",
 }
 
 export default en

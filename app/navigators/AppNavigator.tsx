@@ -1,42 +1,19 @@
-/**
- * The app navigator (formerly "AppNavigator" and "MainNavigator") is used for the primary
- * navigation flows of your app.
- * Generally speaking, it will contain an auth flow (registration, login, forgot password)
- * and a "main" flow which the user will use once logged in.
- */
+// modules
+import React from "react"
 import { DarkTheme, DefaultTheme, NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import { observer } from "mobx-react-lite"
-import React from "react"
 import { useColorScheme } from "react-native"
 import * as Screens from "app/screens"
 import Config from "../config"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
+import { TabNavigator } from "./TabNavigator"
 
-/**
- * This type allows TypeScript to know what routes are defined in this navigator
- * as well as what properties (if any) they might take when navigating to them.
- *
- * If no params are allowed, pass through `undefined`. Generally speaking, we
- * recommend using your MobX-State-Tree store(s) to keep application state
- * rather than passing state through navigation params.
- *
- * For more information, see this documentation:
- *   https://reactnavigation.org/docs/params/
- *   https://reactnavigation.org/docs/typescript#type-checking-the-navigator
- *   https://reactnavigation.org/docs/typescript/#organizing-types
- */
 export type AppStackParamList = {
-  Welcome: undefined
-  // 🔥 Your screens go here
   Login: undefined
-  Map: undefined
-  Checkout: undefined
-  Booking: undefined
+  Home: undefined
   Payment: undefined
-  Service: undefined
-  More: undefined
   Profile: undefined
   BankAccountManager: undefined
   VehicleManager: undefined
@@ -45,7 +22,10 @@ export type AppStackParamList = {
   Setting: undefined
   PaymentSuccess: undefined
   BookingSlotCountDown: undefined
-  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
+  RegisterBankAccount: undefined
+  RegisterPersonalInfo: undefined
+  RegisterSuccess: undefined
+  RegisterVehicle: undefined
 }
 
 /**
@@ -65,10 +45,98 @@ const Stack = createNativeStackNavigator<AppStackParamList>()
 const AppStack = observer(function AppStack() {
   return (
     <Stack.Navigator
-      screenOptions={{ headerShown: false, navigationBarColor: colors.background }}
-      initialRouteName="Login"
+      screenOptions={{ headerShown: false, navigationBarColor: colors.white }}
+      initialRouteName="Home"
     >
-      <Stack.Screen name="Login" component={Screens.LoginScreen} />
+      <Stack.Screen
+        name="Home"
+        component={TabNavigator}
+        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+      />
+
+      <Stack.Screen
+        name="Login"
+        component={Screens.LoginScreen}
+        options={{ animation: "slide_from_right" }}
+      />
+
+      <Stack.Screen
+        name="RegisterPersonalInfo"
+        component={Screens.RegisterPersonalInfoScreen}
+        options={{ animation: "slide_from_right" }}
+      />
+
+      <Stack.Screen
+        name="RegisterBankAccount"
+        component={Screens.RegisterBankAccountScreen}
+        options={{ animation: "slide_from_right" }}
+      />
+
+      <Stack.Screen
+        name="RegisterVehicle"
+        component={Screens.RegisterVehicleScreen}
+        options={{ animation: "slide_from_right" }}
+      />
+
+      <Stack.Screen
+        name="RegisterSuccess"
+        component={Screens.RegisterSuccessScreen}
+        options={{ animation: "slide_from_right" }}
+      />
+
+      <Stack.Screen
+        name="Payment"
+        component={Screens.PaymentScreen}
+        options={{ animation: "slide_from_right" }}
+      />
+
+      <Stack.Screen
+        name="PaymentSuccess"
+        component={Screens.PaymentSuccessScreen}
+        options={{ animation: "slide_from_right" }}
+      />
+
+      <Stack.Screen
+        name="Profile"
+        component={Screens.ProfileScreen}
+        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+      />
+
+      <Stack.Screen
+        name="VehicleManager"
+        component={Screens.VehicleManagerScreen}
+        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+      />
+
+      <Stack.Screen
+        name="BankAccountManager"
+        component={Screens.BankAccountManagerScreen}
+        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+      />
+
+      <Stack.Screen
+        name="Faq"
+        component={Screens.FaqScreen}
+        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+      />
+
+      <Stack.Screen
+        name="Policy"
+        component={Screens.PolicyScreen}
+        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+      />
+
+      <Stack.Screen
+        name="Setting"
+        component={Screens.SettingScreen}
+        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+      />
+
+      <Stack.Screen
+        name="BookingSlotCountDown"
+        component={Screens.BookingSlotCountDownScreen}
+        options={{ animation: "slide_from_right" }}
+      />
     </Stack.Navigator>
   )
 })
