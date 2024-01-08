@@ -1,6 +1,3 @@
-// TODO: write documentation about fonts and typography along with guides on how to add custom fonts in own
-// markdown file and add links from here
-
 import { Platform } from "react-native"
 import {
   SpaceGrotesk_300Light as spaceGroteskLight,
@@ -16,6 +13,20 @@ export const customFontsToLoad = {
   spaceGroteskMedium,
   spaceGroteskSemiBold,
   spaceGroteskBold,
+  rubikLight: require("../../assets/fonts/Rubik-Light.ttf"),
+  rubikRegular: require("../../assets/fonts/Rubik-Regular.ttf"),
+  rubikMedium: require("../../assets/fonts/Rubik-Medium.ttf"),
+  rubikSemiBold: require("../../assets/fonts/Rubik-SemiBold.ttf"),
+  rubikBold: require("../../assets/fonts/Rubik-Bold.ttf"),
+  rubikExtraBold: require("../../assets/fonts/Rubik-ExtraBold.ttf"),
+  rubikBlack: require("../../assets/fonts/Rubik-Black.ttf"),
+  rubikLightItalic: require("../../assets/fonts/Rubik-LightItalic.ttf"),
+  rubikRegularItalic: require("../../assets/fonts/Rubik-Italic.ttf"),
+  rubikMediumItalic: require("../../assets/fonts/Rubik-MediumItalic.ttf"),
+  rubikSemiBoldItalic: require("../../assets/fonts/Rubik-SemiBoldItalic.ttf"),
+  rubikBoldItalic: require("../../assets/fonts/Rubik-BoldItalic.ttf"),
+  rubikExtraBoldItalic: require("../../assets/fonts/Rubik-ExtraBoldItalic.ttf"),
+  rubikBlackItalic: require("../../assets/fonts/Rubik-BlackItalic.ttf"),
 }
 
 const fonts = {
@@ -49,6 +60,22 @@ const fonts = {
     // Android only font.
     normal: "monospace",
   },
+  rubik: {
+    light: "rubikLight",
+    regular: "rubikRegular",
+    medium: "rubikMedium",
+    semiBold: "rubikSemiBold",
+    bold: "rubikBold",
+    extraBold: "rubikExtraBold",
+    black: "rubikBlack",
+    lightItalic: "rubikLightItalic",
+    regularItalic: "rubikRegularItalic",
+    mediumItalic: "rubikMediumItalic",
+    semiBoldItalic: "rubikSemiBoldItalic",
+    boldItalic: "rubikBoldItalic",
+    extraBoldItalic: "rubikExtraBoldItalic",
+    blackItalic: "rubikBlackItalic",
+  },
 }
 
 export const typography = {
@@ -59,7 +86,7 @@ export const typography = {
   /**
    * The primary font. Used in most places.
    */
-  primary: fonts.spaceGrotesk,
+  primary: fonts.rubik,
   /**
    * An alternate font used for perhaps titles and stuff.
    */
