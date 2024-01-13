@@ -72,6 +72,10 @@ const en = {
   checkout: "Checkout",
   more: "More",
   service: "Service",
+  invalidEmail: "Invalid email",
+  invalidPhoneNumber: "Invalid phone number",
+  invalidPassword: "Invalid password",
+  passwordRequired: "Password is required",
 }
 
 export default en

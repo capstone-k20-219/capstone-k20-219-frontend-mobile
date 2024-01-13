@@ -26,6 +26,11 @@ export type AppStackParamList = {
   RegisterPersonalInfo: undefined
   RegisterSuccess: undefined
   RegisterVehicle: undefined
+  Map: undefined
+  Booking: undefined
+  Checkout: undefined
+  Service: undefined
+  More: undefined
 }
 
 /**
@@ -45,8 +50,13 @@ const Stack = createNativeStackNavigator<AppStackParamList>()
 const AppStack = observer(function AppStack() {
   return (
     <Stack.Navigator
-      screenOptions={{ headerShown: false, navigationBarColor: colors.white }}
-      initialRouteName="Home"
+      screenOptions={{
+        headerShown: false,
+        navigationBarColor: colors.white,
+        statusBarColor: colors.white,
+        statusBarStyle: "dark",
+      }}
+      initialRouteName="Login"
     >
       <Stack.Screen
         name="Home"
