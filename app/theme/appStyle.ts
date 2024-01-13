@@ -14,4 +14,8 @@ export const appStyle = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
+  justifySpaceBetwwen: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
 })

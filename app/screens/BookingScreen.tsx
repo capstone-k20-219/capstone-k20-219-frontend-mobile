@@ -1,26 +1,44 @@
-import React, { FC } from "react"
-import { observer } from "mobx-react-lite"
-import { ViewStyle } from "react-native"
-import { AppStackScreenProps } from "app/navigators"
-import { Screen, Text } from "app/components"
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
+import React, { FC, useState } from "react"
 
+// modules
+import { observer } from "mobx-react-lite"
+import { Image, ImageStyle, TouchableOpacity } from "react-native"
+import { AppStackScreenProps } from "app/navigators"
+
+// components
+import { BookingSlotModal } from "app/components"
+import { SafeAreaView } from "react-native-safe-area-context"
+
+// themes
+import { appStyle, images } from "app/theme"
+
+// constants
+import { sizes } from "app/constants"
 interface BookingScreenProps extends AppStackScreenProps<"Booking"> {}
 
 export const BookingScreen: FC<BookingScreenProps> = observer(function BookingScreen() {
-  // Pull in one of our MST stores
-  // const { someStore, anotherStore } = useStores()
+  const [isBookingModalOn, setIsBookingModalOn] = useState(false)
 
-  // Pull in navigation via hook
-  // const navigation = useNavigation()
+  const handleToggleBookingModalOnPress = () => {
+    setIsBookingModalOn(!isBookingModalOn)
+  }
+
   return (
-    <Screen style={$root} preset="scroll">
-      <Text text="booking" />
-    </Screen>
+    <SafeAreaView style={appStyle.rootContainer}>
+      <TouchableOpacity activeOpacity={1} onPress={handleToggleBookingModalOnPress}>
+        <Image style={$image} source={images.map} resizeMode="cover" />
+      </TouchableOpacity>
+      <BookingSlotModal
+        visibility={isBookingModalOn}
+        setVisibility={setIsBookingModalOn}
+        parkingSlotId="PH345-5634"
+      />
+    </SafeAreaView>
   )
 })
 
-const $root: ViewStyle = {
-  flex: 1,
+const $image: ImageStyle = {
+  alignSelf: "center",
+  width: sizes.screenWidth * 1,
+  height: sizes.screenHeight * 0.9,
 }

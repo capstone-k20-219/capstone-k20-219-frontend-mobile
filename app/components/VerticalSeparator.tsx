@@ -1,38 +1,33 @@
-import * as React from "react"
-import { StyleProp, TextStyle, View, ViewStyle } from "react-native"
-import { observer } from "mobx-react-lite"
-import { colors, typography } from "app/theme"
-import { Text } from "app/components/Text"
+import React from "react"
 
+// modules
+import { StyleProp, View, ViewStyle } from "react-native"
+import { observer } from "mobx-react-lite"
+
+// themes
+import { colors } from "app/theme"
 export interface VerticalSeparatorProps {
-  /**
-   * An optional style override useful for padding & margin.
-   */
+  width?: string | number
+  height?: string | number
+  color?: string
   style?: StyleProp<ViewStyle>
 }
 
-/**
- * Describe your component here
- */
 export const VerticalSeparator = observer(function VerticalSeparator(
   props: VerticalSeparatorProps,
 ) {
-  const { style } = props
-  const $styles = [$container, style]
+  const { width = "100%", height = 1, color = colors.black, style } = props
 
-  return (
-    <View style={$styles}>
-      <Text style={$text}>Hello</Text>
-    </View>
-  )
+  return <View style={[$verticalSeparate(width, height, color), style]} />
 })
 
-const $container: ViewStyle = {
-  justifyContent: "center",
-}
-
-const $text: TextStyle = {
-  fontFamily: typography.primary.normal,
-  fontSize: 14,
-  color: colors.palette.primary500,
-}
+const $verticalSeparate = (
+  width?: string | number,
+  height?: string | number,
+  color?: string,
+): ViewStyle => ({
+  width,
+  height,
+  backgroundColor: color,
+  alignSelf: "center",
+})

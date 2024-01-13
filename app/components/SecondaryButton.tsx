@@ -1,36 +1,64 @@
-import * as React from "react"
-import { StyleProp, TextStyle, View, ViewStyle } from "react-native"
+import React from "react"
+
+// modules
+import {
+  TouchableOpacity,
+  TouchableOpacityProps,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
+} from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, typography } from "app/theme"
+
+// components
 import { Text } from "app/components/Text"
 
-export interface SecondaryButtonProps {
-  /**
-   * An optional style override useful for padding & margin.
-   */
+// themes
+import { colors, typography } from "app/theme"
+
+// i18n
+import { TxKeyPath } from "app/i18n"
+type SecondaryButtonProps = {
   style?: StyleProp<ViewStyle>
-}
+  titleTx?: TxKeyPath
+  titleStyle?: StyleProp<TextStyle>
+  activeOpacity?: number
+  color?: string
+} & TouchableOpacityProps
 
 /**
  * Describe your component here
  */
 export const SecondaryButton = observer(function SecondaryButton(props: SecondaryButtonProps) {
-  const { style } = props
-  const $styles = [$container, style]
-
+  const {
+    style,
+    titleTx,
+    titleStyle,
+    activeOpacity = 0.7,
+    color = colors.palette.primary200,
+    ...TouchableOpacityProps
+  } = props
   return (
-    <View style={$styles}>
-      <Text style={$text}>Hello</Text>
-    </View>
+    <TouchableOpacity
+      style={[$container(color), style]}
+      activeOpacity={activeOpacity}
+      {...TouchableOpacityProps}
+    >
+      <Text style={[$title, titleStyle]} tx={titleTx} />
+    </TouchableOpacity>
   )
 })
 
-const $container: ViewStyle = {
-  justifyContent: "center",
-}
+const $container = (color: string): ViewStyle => ({
+  alignItems: "center",
+  paddingVertical: 11,
+  backgroundColor: color,
+  borderRadius: 5,
+})
 
-const $text: TextStyle = {
-  fontFamily: typography.primary.normal,
-  fontSize: 14,
-  color: colors.palette.primary500,
+const $title: TextStyle = {
+  fontFamily: typography.fonts.rubik.extraBold,
+  fontSize: 12,
+  lineHeight: 16,
+  color: colors.white,
 }

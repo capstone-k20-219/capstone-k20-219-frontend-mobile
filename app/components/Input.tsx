@@ -37,6 +37,7 @@ type InputProps = {
   disable?: boolean
   error?: TxKeyPath
   placeHolderTx?: TxKeyPath
+  textColor?: string
 } & TextInputProps
 
 export const Input = forwardRef(function Input(props: InputProps, ref: Ref<TextInput>) {
@@ -51,6 +52,7 @@ export const Input = forwardRef(function Input(props: InputProps, ref: Ref<TextI
     disable = false,
     error,
     placeHolderTx,
+    textColor = colors.text,
     ...TextInputProps
   } = props
   const [isPasswordHidden, setIsPasswordHidden] = useState(true)
@@ -82,14 +84,14 @@ export const Input = forwardRef(function Input(props: InputProps, ref: Ref<TextI
           ref={inputRef}
           autoCorrect={false}
           {...TextInputProps}
-          placeholder={translate(placeHolderTx)}
+          placeholder={placeHolderTx ? translate(placeHolderTx) : ""}
           placeholderTextColor={colors.text}
           value={controller ? controller.field.value : TextInputProps.value}
           onChangeText={controller ? controller.field.onChange : TextInputProps.onChangeText}
           cursorColor={colors.black}
           editable={!disable}
           secureTextEntry={props.secureTextEntry && isPasswordHidden}
-          style={$input}
+          style={$input(textColor)}
         />
         {props.secureTextEntry && (
           <AnimatedTouchableOpacity
@@ -114,20 +116,21 @@ const $labelText: TextStyle = {
 const $inputWrapper = (isOutLine: boolean): ViewStyle => ({
   flexDirection: "row",
   alignItems: "center",
-  borderBottomWidth: 1,
-  borderWidth: isOutLine ? 1 : 0,
+  borderBottomWidth: isOutLine ? 0 : 1,
+  borderRadius: isOutLine ? 5 : 0,
   borderColor: colors.border,
   paddingVertical: 5,
   paddingHorizontal: 10,
 })
 
-const $input: TextStyle = {
+const $input = (textColor: string): TextStyle => ({
   flex: 1,
   height: "100%",
   paddingVertical: 0,
   fontFamily: typography.fonts.rubik.regular,
   fontSize: 14,
-}
+  color: textColor,
+})
 
 const $eyeIcon: ImageStyle = {
   width: 25,

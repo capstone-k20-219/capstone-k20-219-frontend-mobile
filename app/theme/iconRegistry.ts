@@ -28,4 +28,5 @@ export const iconRegistry = {
   truck: require("../../assets/icons/truck.png"),
   user: require("../../assets/icons/user.png"),
   vcb: require("../../assets/icons/vcb.png"),
+  noVehicle: require("../../assets/icons/noVehicle.png"),
 }
