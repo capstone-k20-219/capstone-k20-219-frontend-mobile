@@ -1,26 +1,43 @@
 import React, { FC } from "react"
+
+// modules
 import { observer } from "mobx-react-lite"
-import { ViewStyle } from "react-native"
+import { ViewStyle, Image, View, TextStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Screen, Text } from "app/components"
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
+import { SafeAreaView } from "react-native-safe-area-context"
+
+// components
+import { Text } from "app/components"
+
+// themes
+import { images, appStyle, typography } from "app/theme"
+
+// constants
+import { sizes } from "app/constants"
 
 interface CheckoutScreenProps extends AppStackScreenProps<"Checkout"> {}
 
 export const CheckoutScreen: FC<CheckoutScreenProps> = observer(function CheckoutScreen() {
-  // Pull in one of our MST stores
-  // const { someStore, anotherStore } = useStores()
-
-  // Pull in navigation via hook
-  // const navigation = useNavigation()
   return (
-    <Screen style={$root} preset="scroll">
-      <Text text="checkout" />
-    </Screen>
+    <SafeAreaView style={appStyle.rootContainer}>
+      <View style={$container}>
+        <Image source={images.qrCode} resizeMode="contain" />
+        <Text style={$text} tx="scanQRCode" />
+      </View>
+    </SafeAreaView>
   )
 })
 
-const $root: ViewStyle = {
+const $container: ViewStyle = {
   flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+}
+
+const $text: TextStyle = {
+  paddingTop: 16,
+  fontFamily: typography.fonts.rubik.regular,
+  fontSize: 24,
+  width: sizes.screenWidth * 0.5,
+  textAlign: "center",
 }
