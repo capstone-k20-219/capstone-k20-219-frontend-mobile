@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite"
 import { colors, typography } from "app/theme"
 import { Text } from "app/components/Text"
 
-export interface AddNewInfoModalProps {
+export interface AddBankAccountModalProps {
   /**
    * An optional style override useful for padding & margin.
    */
@@ -14,7 +14,9 @@ export interface AddNewInfoModalProps {
 /**
  * Describe your component here
  */
-export const AddNewInfoModal = observer(function AddNewInfoModal(props: AddNewInfoModalProps) {
+export const AddBankAccountModal = observer(function AddBankAccountModal(
+  props: AddBankAccountModalProps,
+) {
   const { style } = props
   const $styles = [$container, style]
 

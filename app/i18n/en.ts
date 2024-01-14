@@ -78,6 +78,7 @@ const en = {
   passwordRequired: "Password is required",
   logoutConfirmation: "Are you sure you want to logout of your account?",
   yes: "Yes",
+  save: "Save",
 }
 
 export default en

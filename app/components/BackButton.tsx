@@ -1,36 +1,54 @@
-import * as React from "react"
-import { StyleProp, TextStyle, View, ViewStyle } from "react-native"
+import React from "react"
+
+// modules
+import { StyleProp, ViewStyle, ImageStyle, TouchableOpacity } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, typography } from "app/theme"
-import { Text } from "app/components/Text"
+
+// navigators
+import { navigationRef } from "app/navigators"
+
+// components
+import { Icon } from "app/components/Icon"
+
+// themes
+import { colors } from "app/theme"
 
 export interface BackButtonProps {
-  /**
-   * An optional style override useful for padding & margin.
-   */
   style?: StyleProp<ViewStyle>
+  iconStyle?: StyleProp<ImageStyle>
+  activeOpacity?: number
+  width?: number | string
+  height?: number | string
 }
 
-/**
- * Describe your component here
- */
 export const BackButton = observer(function BackButton(props: BackButtonProps) {
-  const { style } = props
-  const $styles = [$container, style]
+  const { style, iconStyle, activeOpacity = 0.7, width = 30, height = 30 } = props
+
+  const handleGoBackOnPress = () => {
+    if (navigationRef.canGoBack()) navigationRef.goBack()
+  }
 
   return (
-    <View style={$styles}>
-      <Text style={$text}>Hello</Text>
-    </View>
+    <TouchableOpacity
+      style={[$container(width, height), style]}
+      activeOpacity={activeOpacity}
+      onPress={handleGoBackOnPress}
+    >
+      <Icon style={[$icon, iconStyle]} icon="arrowLeft" />
+    </TouchableOpacity>
   )
 })
 
-const $container: ViewStyle = {
-  justifyContent: "center",
-}
+const $container = (width: number | string, height: number | string): ViewStyle => ({
+  backgroundColor: colors.palette.primary200,
+  padding: 7,
+  borderRadius: 5,
+  width,
+  height,
+})
 
-const $text: TextStyle = {
-  fontFamily: typography.primary.normal,
-  fontSize: 14,
-  color: colors.palette.primary500,
+const $icon: ImageStyle = {
+  width: 16,
+  height: 16,
+  tintColor: colors.white,
 }
