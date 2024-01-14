@@ -11,6 +11,8 @@ import { Text, InfoSummaryBox, BackButton, AddButton, IconTypes } from "app/comp
 
 // themes
 import { appStyle, colors, typography } from "app/theme"
+
+// i18n
 import { TxKeyPath } from "app/i18n"
 
 interface VehicleManagerScreenProps extends AppStackScreenProps<"VehicleManager"> {}

@@ -23,6 +23,7 @@ export interface InfoSummaryBoxProps {
   titleTx?: TxKeyPath
   title?: string
   labelTx?: TxKeyPath
+  label?: string
   leftIconStyle?: StyleProp<ImageStyle>
   rightIconStyle?: StyleProp<ImageStyle>
   titleStyle?: StyleProp<TextStyle>
@@ -37,6 +38,7 @@ export const InfoSummaryBox = observer(function InfoSummaryBox(props: InfoSummar
     titleTx,
     title,
     labelTx,
+    label,
     leftIconStyle,
     rightIconStyle,
     titleStyle,
@@ -53,7 +55,7 @@ export const InfoSummaryBox = observer(function InfoSummaryBox(props: InfoSummar
       <Icon style={[$leftIcon, leftIconStyle]} icon={icon} />
       <View style={$textContainer}>
         <Text style={[$title, titleStyle]} tx={titleTx} text={title} />
-        <Text style={[$label, labelStyle]} tx={labelTx} />
+        <Text style={[$label, labelStyle]} tx={labelTx} text={label} />
       </View>
       <TouchableOpacity activeOpacity={activeOpacity} onPress={handleDeleteOnPress}>
         <Icon style={[$rightIcon, rightIconStyle]} icon="delete" />
