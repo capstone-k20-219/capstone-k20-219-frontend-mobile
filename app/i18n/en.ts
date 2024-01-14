@@ -79,6 +79,9 @@ const en = {
   logoutConfirmation: "Are you sure you want to logout of your account?",
   yes: "Yes",
   save: "Save",
+  car: "Car",
+  motorbike: "Motorbike",
+  truck: "Truck",
 }
 
 export default en
