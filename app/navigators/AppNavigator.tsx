@@ -109,37 +109,37 @@ const AppStack = observer(function AppStack() {
       <Stack.Screen
         name="Profile"
         component={Screens.ProfileScreen}
-        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+        options={{ animation: "slide_from_right" }}
       />
 
       <Stack.Screen
         name="VehicleManager"
         component={Screens.VehicleManagerScreen}
-        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+        options={{ animation: "slide_from_right" }}
       />
 
       <Stack.Screen
         name="BankAccountManager"
         component={Screens.BankAccountManagerScreen}
-        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+        options={{ animation: "slide_from_right" }}
       />
 
       <Stack.Screen
         name="Faq"
         component={Screens.FaqScreen}
-        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+        options={{ animation: "slide_from_right" }}
       />
 
       <Stack.Screen
         name="Policy"
         component={Screens.PolicyScreen}
-        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+        options={{ animation: "slide_from_right" }}
       />
 
       <Stack.Screen
         name="Setting"
         component={Screens.SettingScreen}
-        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+        options={{ animation: "slide_from_right" }}
       />
 
       <Stack.Screen

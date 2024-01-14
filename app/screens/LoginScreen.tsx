@@ -46,7 +46,7 @@ const schema = yup
 export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(props) {
   const passwordRef = useRef(null)
 
-  const { handleSubmit, control } = useForm<FormData>({
+  const { handleSubmit, control, reset } = useForm<FormData>({
     resolver: yupResolver<any>(schema),
     defaultValues: {
       emailOrPhoneNumber: "",
@@ -60,8 +60,10 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(p
 
   const handleSubmitOnPress = (data: FormData) => {
     console.log(data)
-    if (data.emailOrPhoneNumber === "0818314202" && data.password === "Huuduc27072002")
+    if (data.emailOrPhoneNumber === "0818314202" && data.password === "Huuduc27072002") {
       props.navigation.navigate("Home")
+      reset()
+    }
   }
 
   const handleRegisterOnPress = () => {

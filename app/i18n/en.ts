@@ -46,7 +46,7 @@ const en = {
   policy: "Policy",
   FAQ: "FAQ",
   setting: "Setting",
-  logout: "Logout",
+  logout: "Log out",
   edit: "Edit",
   vehicleList: "VEHICLE LIST",
   serviceBooking: "Service Booking",
@@ -76,6 +76,8 @@ const en = {
   invalidPhoneNumber: "Invalid phone number",
   invalidPassword: "Invalid password",
   passwordRequired: "Password is required",
+  logoutConfirmation: "Are you sure you want to logout of your account?",
+  yes: "Yes",
 }
 
 export default en

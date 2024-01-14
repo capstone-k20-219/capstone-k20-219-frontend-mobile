@@ -1,26 +1,85 @@
-import React, { FC } from "react"
+import React, { FC, useState } from "react"
+
+// modules
 import { observer } from "mobx-react-lite"
-import { ViewStyle } from "react-native"
-import { AppStackScreenProps } from "app/navigators"
-import { Screen, Text } from "app/components"
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
+import { ViewStyle, View, ImageStyle } from "react-native"
+import { AppStackParamList, AppStackScreenProps } from "app/navigators"
+import { SafeAreaView } from "react-native-safe-area-context"
+
+// components
+import { IconTypes, ScreenLinkingBox, LogoutModal } from "app/components"
+
+// themes
+import { appStyle } from "app/theme"
+
+// i18n
+import { TxKeyPath } from "app/i18n"
 
 interface MoreScreenProps extends AppStackScreenProps<"More"> {}
 
-export const MoreScreen: FC<MoreScreenProps> = observer(function MoreScreen() {
-  // Pull in one of our MST stores
-  // const { someStore, anotherStore } = useStores()
+interface ScreenLinkingData {
+  icon?: IconTypes
+  title?: TxKeyPath
+  destinationScreen?: keyof AppStackParamList
+}
 
-  // Pull in navigation via hook
-  // const navigation = useNavigation()
+export const MoreScreen: FC<MoreScreenProps> = observer(function MoreScreen(props) {
+  const [isLogoutModalOn, setIsLogoutModalOn] = useState(false)
+  const data: ScreenLinkingData[] = [
+    { icon: "user", title: "profile", destinationScreen: "Profile" },
+    { icon: "creditCard", title: "bankAccount", destinationScreen: "BankAccountManager" },
+    { icon: "car", title: "vehicle", destinationScreen: "VehicleManager" },
+    { icon: "policy", title: "policy", destinationScreen: "Policy" },
+    { icon: "info", title: "FAQ", destinationScreen: "Faq" },
+    { icon: "settings", title: "setting", destinationScreen: "Setting" },
+    { icon: "signout", title: "logout" },
+  ]
+
+  const handleNavigateOnPress = (screen: keyof AppStackParamList) => {
+    props.navigation.navigate(screen)
+  }
+
+  const handleToggleLogoutModalOnPress = () => {
+    setIsLogoutModalOn(true)
+  }
+
   return (
-    <Screen style={$root} preset="scroll">
-      <Text text="more" />
-    </Screen>
+    <SafeAreaView style={appStyle.rootContainer}>
+      <View style={$container}>
+        {data.map((value, index) => (
+          <ScreenLinkingBox
+            key={index}
+            icon={value.icon}
+            iconStyle={index === 2 ? $icon : null}
+            titleTx={value.title}
+            onPress={
+              index === data.length - 1
+                ? handleToggleLogoutModalOnPress
+                : () => handleNavigateOnPress(value.destinationScreen)
+            }
+          />
+        ))}
+      </View>
+      <LogoutModal
+        cancelButtonTitleTx="cancel"
+        actionButtonTitleTx="yes"
+        visibility={isLogoutModalOn}
+        setVisibility={setIsLogoutModalOn}
+      />
+    </SafeAreaView>
   )
 })
 
-const $root: ViewStyle = {
-  flex: 1,
+const $container: ViewStyle = {
+  rowGap: 12,
+  paddingTop: 48,
+  paddingHorizontal: 24,
+  flexDirection: "row",
+  flexWrap: "wrap",
+  justifyContent: "space-between",
+}
+
+const $icon: ImageStyle = {
+  width: 60,
+  height: 35,
 }

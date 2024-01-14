@@ -20,7 +20,7 @@ export const BookingScreen: FC<BookingScreenProps> = observer(function BookingSc
   const [isBookingModalOn, setIsBookingModalOn] = useState(false)
 
   const handleToggleBookingModalOnPress = () => {
-    setIsBookingModalOn(!isBookingModalOn)
+    setIsBookingModalOn(true)
   }
 
   return (
