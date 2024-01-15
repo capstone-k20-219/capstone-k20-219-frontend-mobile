@@ -2,6 +2,7 @@
 // modules
 import { StyleSheet } from "react-native"
 import { colors } from "./colors"
+import { sizes } from "app/constants"
 
 export const appStyle = StyleSheet.create({
   flex1: {
@@ -20,5 +21,8 @@ export const appStyle = StyleSheet.create({
   },
   marginTop16: {
     marginTop: 16,
+  },
+  maxHeightHalfScreen: {
+    maxHeight: sizes.screenHeight * 0.5,
   },
 })
