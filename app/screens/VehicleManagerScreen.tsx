@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FC, useState } from "react"
 
 // modules
 import { observer } from "mobx-react-lite"
@@ -7,7 +7,14 @@ import { AppStackScreenProps } from "app/navigators"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 // components
-import { Text, InfoSummaryBox, BackButton, AddButton, IconTypes } from "app/components"
+import {
+  Text,
+  InfoSummaryBox,
+  BackButton,
+  AddButton,
+  IconTypes,
+  AddVehicleModal,
+} from "app/components"
 
 // themes
 import { appStyle, colors, typography } from "app/theme"
@@ -25,18 +32,23 @@ interface VehicleData {
 
 export const VehicleManagerScreen: FC<VehicleManagerScreenProps> = observer(
   function VehicleManagerScreen() {
+    const [isOpen, setIsOpen] = useState(false)
     const data: VehicleData[] = [
       { icon: "car", plateNumber: "HP234-34.653", type: "car" },
       { icon: "motorbike", plateNumber: "HP234-34.653", type: "motorbike" },
       { icon: "truck", plateNumber: "HP234-34.653", type: "truck" },
     ]
 
+    const handleOpenModalOnPress = () => {
+      setIsOpen(true)
+    }
+
     return (
       <SafeAreaView style={appStyle.rootContainer}>
         <View style={$headerContainer}>
           <BackButton />
           <Text style={$title} tx="vehicleList" />
-          <AddButton />
+          <AddButton onPress={handleOpenModalOnPress} />
         </View>
         <ScrollView contentContainerStyle={$container}>
           {data.map((value, index) => (
@@ -48,6 +60,12 @@ export const VehicleManagerScreen: FC<VehicleManagerScreenProps> = observer(
             />
           ))}
         </ScrollView>
+        <AddVehicleModal
+          visibility={isOpen}
+          setVisibility={setIsOpen}
+          cancelButtonTitleTx="cancel"
+          actionButtonTitleTx="confirm"
+        />
       </SafeAreaView>
     )
   },

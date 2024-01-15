@@ -18,4 +18,7 @@ export const appStyle = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  marginTop16: {
+    marginTop: 16,
+  },
 })

@@ -1,28 +1,104 @@
-import React, { FC } from "react"
+import React, { FC, useRef } from "react"
+
+// modules
 import { observer } from "mobx-react-lite"
-import { ViewStyle } from "react-native"
+import { ViewStyle, View, TextStyle, KeyboardAvoidingView, ScrollView } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Screen, Text } from "app/components"
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
+import { SafeAreaView } from "react-native-safe-area-context"
+
+// components
+import { RegisterProgessBar, BackButton, PrimaryHeader, Input, PrimaryButton } from "app/components"
+
+// hooks
+import { useForm } from "react-hook-form"
+
+// themes
+import { appStyle } from "app/theme"
+
+// constants
+import { sizes } from "app/constants"
 
 interface RegisterBankAccountScreenProps extends AppStackScreenProps<"RegisterBankAccount"> {}
 
-export const RegisterBankAccountScreen: FC<RegisterBankAccountScreenProps> = observer(
-  function RegisterBankAccountScreen() {
-    // Pull in one of our MST stores
-    // const { someStore, anotherStore } = useStores()
+interface FormData {
+  bankName?: string
+  cardNumber?: string
+}
 
-    // Pull in navigation via hook
-    // const navigation = useNavigation()
+export const RegisterBankAccountScreen: FC<RegisterBankAccountScreenProps> = observer(
+  function RegisterBankAccountScreen(props) {
+    const inputRef = useRef(null)
+    const { handleSubmit, control } = useForm<FormData>({
+      defaultValues: {
+        bankName: "",
+        cardNumber: "",
+      },
+    })
+
+    const handleSubmitOnPress = (data: FormData) => {
+      console.log(data)
+      props.navigation.navigate("RegisterSuccess")
+    }
+
+    const handleSkipOnPress = () => {
+      props.navigation.navigate("RegisterSuccess")
+    }
+
+    const handleFocusNextInputOnPress = () => {
+      inputRef.current?.focus()
+    }
+
     return (
-      <Screen style={$root} preset="scroll">
-        <Text text="registerBankAccount" />
-      </Screen>
+      <SafeAreaView style={appStyle.rootContainer}>
+        <KeyboardAvoidingView style={appStyle.flex1} behavior="padding">
+          <View style={$container}>
+            <BackButton />
+            <RegisterProgessBar lineWidth={sizes.screenWidth * 0.205} level={2} />
+          </View>
+          <PrimaryHeader style={$title} tx="bankAccountRegister" />
+          <ScrollView contentContainerStyle={$scrollViewContainer}>
+            <Input
+              control={control}
+              controlName="plateNumber"
+              placeHolderTx="plateNumber"
+              onSubmitEditing={handleFocusNextInputOnPress}
+              blurOnSubmit={false}
+              returnKeyType="next"
+            />
+            <Input
+              ref={inputRef}
+              control={control}
+              controlName="cardNumber"
+              placeHolderTx="cardNumber"
+              returnKeyType="done"
+            />
+            <PrimaryButton
+              style={appStyle.marginTop16}
+              titleTx="done"
+              activeOpacity={0.7}
+              onPress={handleSubmit(handleSubmitOnPress)}
+            />
+            <PrimaryButton titleTx="skipForNow" activeOpacity={0.7} onPress={handleSkipOnPress} />
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     )
   },
 )
 
-const $root: ViewStyle = {
-  flex: 1,
+const $container: ViewStyle = {
+  paddingVertical: 31,
+  paddingHorizontal: 16,
+  rowGap: 17,
+}
+
+const $title: TextStyle = {
+  textAlign: "center",
+}
+
+const $scrollViewContainer: ViewStyle = {
+  flexGrow: 1,
+  paddingTop: 32,
+  paddingHorizontal: 25,
+  rowGap: 25,
 }

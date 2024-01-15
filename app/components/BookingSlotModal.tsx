@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 
 // modules
 import { StyleProp, TextStyle, View, ViewStyle } from "react-native"
@@ -10,6 +10,8 @@ import { Text } from "app/components/Text"
 import { VerticalSeparator } from "app/components/VerticalSeparator"
 import { Input } from "app/components/Input"
 import { SecondaryButton } from "app/components/SecondaryButton"
+import { Picker } from "app/components/Picker"
+import { DropDownList } from "app/components/DropDownList"
 
 // hooks
 import { useForm } from "react-hook-form"
@@ -34,7 +36,9 @@ interface FormData {
 
 export const BookingSlotModal = observer(function BookingSlotModal(props: BookingSlotModalProps) {
   const { style, visibility, setVisibility, parkingSlotId = "" } = props
-  const { handleSubmit } = useForm<FormData>({
+  const [date, setDate] = useState(new Date())
+  const [time, setTime] = useState(new Date())
+  const { handleSubmit, control, setValue, getValues, reset } = useForm<FormData>({
     defaultValues: {
       parkingSlotId,
       vehicle: "",
@@ -43,60 +47,99 @@ export const BookingSlotModal = observer(function BookingSlotModal(props: Bookin
     },
   })
 
+  const data: string[] = ["PH345-5634", "PH345-5634", "PH345-5634", "PH345-5634"]
+
   const handleDismissBookingModalOnPress = () => {
     setVisibility(false)
   }
 
   const handleSubmitOnPress = (data: FormData) => {
+    setVisibility(false)
     console.log(data)
+    reset()
   }
 
   return (
     <Modal
-      style={[$container, style]}
+      style={appStyle.flex1}
       isVisible={visibility}
       onBackButtonPress={handleDismissBookingModalOnPress}
       onBackdropPress={handleDismissBookingModalOnPress}
       backdropTransitionOutTiming={0}
     >
-      <Text style={$title} tx="parkingSlotBooking" />
-      <VerticalSeparator />
-      <View style={$inputContainer}>
-        <Input
-          labelTx="parkingSlot"
-          isOutLine={true}
-          disable={true}
-          inputWrapperStyle={$inputWrapperStyle}
-          value={parkingSlotId}
-        />
-      </View>
-      <View style={$summaryContainer}>
-        <View style={appStyle.justifySpaceBetwwen}>
-          <Text style={$summaryText} tx="bookingFee" />
-          <Text style={$summaryText} text={"$1.00"} />
-        </View>
-        <View style={appStyle.justifySpaceBetwwen}>
-          <Text style={$summaryText} tx="bookingTime" />
-          <Text style={$summaryText} text={"10:30 12/10/2023"} />
-        </View>
+      <View style={[$container, style]}>
+        <Text style={$title} tx="parkingSlotBooking" />
         <VerticalSeparator />
-        <View style={appStyle.justifySpaceBetwwen}>
-          <Text style={$summaryText} tx="totalCost" />
-          <Text style={$summaryText} text={"$2.00"} />
+        <View style={$inputContainer}>
+          <Input
+            labelTx="parkingSlot"
+            isOutLine={true}
+            disable={true}
+            inputWrapperStyle={$inputWrapperStyle}
+            value={parkingSlotId}
+          />
+          <DropDownList
+            control={control}
+            controlName="vehicle"
+            isOutline={true}
+            labelTx="vehicle"
+            setValue={setValue}
+            data={data}
+          />
+          <Picker
+            control={control}
+            controlName="arrivalDate"
+            labelTx="arrivalDate"
+            type="date"
+            isOutline={true}
+            setValue={setValue}
+            state={date}
+            setState={setDate}
+          />
+          <Picker
+            control={control}
+            controlName="arrivalTime"
+            labelTx="arrivalTime"
+            type="time"
+            isOutline={true}
+            setValue={setValue}
+            state={time}
+            setState={setTime}
+          />
         </View>
-      </View>
-      <View style={$buttonContainer}>
-        <SecondaryButton
-          style={$button}
-          titleTx="cancel"
-          color={colors.palette.primary100}
-          onPress={handleDismissBookingModalOnPress}
-        />
-        <SecondaryButton
-          style={$button}
-          titleTx="book"
-          onPress={handleSubmit(handleSubmitOnPress)}
-        />
+        {getValues("arrivalTime") !== "" && getValues("arrivalDate") !== "" && (
+          <View style={$summaryContainer}>
+            <View style={appStyle.justifySpaceBetwwen}>
+              <Text style={$summaryText} tx="bookingFee" />
+              <Text style={$summaryText} text={"$1.00"} />
+            </View>
+            <View style={appStyle.justifySpaceBetwwen}>
+              <Text style={$summaryText} tx="bookingTime" />
+              <Text
+                style={$summaryText}
+                text={`${getValues("arrivalTime")} ${getValues("arrivalDate")}`}
+              />
+            </View>
+            <VerticalSeparator />
+            <View style={appStyle.justifySpaceBetwwen}>
+              <Text style={$summaryText} tx="totalCost" />
+              <Text style={$summaryText} text={"$2.00"} />
+            </View>
+          </View>
+        )}
+        <View style={$buttonContainer}>
+          <SecondaryButton
+            style={$button}
+            titleTx="cancel"
+            color={colors.palette.primary100}
+            onPress={handleDismissBookingModalOnPress}
+          />
+          <SecondaryButton
+            style={$button}
+            titleTx="book"
+            onPress={handleSubmit(handleSubmitOnPress)}
+          />
+        </View>
       </View>
     </Modal>
   )
@@ -122,6 +165,7 @@ const $title: TextStyle = {
 const $inputContainer: ViewStyle = {
   paddingTop: 17,
   paddingBottom: 36,
+  rowGap: 16,
 }
 
 const $inputWrapperStyle: ViewStyle = {

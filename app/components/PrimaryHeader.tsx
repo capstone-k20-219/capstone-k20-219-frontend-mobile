@@ -1,36 +1,34 @@
-import * as React from "react"
-import { StyleProp, TextStyle, View, ViewStyle } from "react-native"
+import React from "react"
+
+// modules
+import { StyleProp, TextStyle } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, typography } from "app/theme"
+
+// components
 import { Text } from "app/components/Text"
 
+// themes
+import { colors, typography } from "app/theme"
+
+// i18n
+import { TxKeyPath } from "app/i18n"
+
 export interface PrimaryHeaderProps {
-  /**
-   * An optional style override useful for padding & margin.
-   */
-  style?: StyleProp<ViewStyle>
+  style?: StyleProp<TextStyle>
+  tx?: TxKeyPath
 }
 
 /**
  * Describe your component here
  */
 export const PrimaryHeader = observer(function PrimaryHeader(props: PrimaryHeaderProps) {
-  const { style } = props
-  const $styles = [$container, style]
+  const { style, tx } = props
 
-  return (
-    <View style={$styles}>
-      <Text style={$text}>Hello</Text>
-    </View>
-  )
+  return <Text style={[$text, style]} tx={tx} />
 })
 
-const $container: ViewStyle = {
-  justifyContent: "center",
-}
-
 const $text: TextStyle = {
-  fontFamily: typography.primary.normal,
-  fontSize: 14,
-  color: colors.palette.primary500,
+  fontFamily: typography.fonts.rubik.bold,
+  fontSize: 24,
+  color: colors.palette.primary200,
 }

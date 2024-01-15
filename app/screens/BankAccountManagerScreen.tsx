@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FC, useState } from "react"
 
 // modules
 import { observer } from "mobx-react-lite"
@@ -7,7 +7,14 @@ import { AppStackScreenProps } from "app/navigators"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 // components
-import { Text, InfoSummaryBox, BackButton, AddButton, IconTypes } from "app/components"
+import {
+  Text,
+  InfoSummaryBox,
+  BackButton,
+  AddButton,
+  IconTypes,
+  AddBankAccountModal,
+} from "app/components"
 
 // themes
 import { appStyle, colors, typography } from "app/theme"
@@ -22,10 +29,15 @@ interface BankAccountData {
 
 export const BankAccountManagerScreen: FC<BankAccountManagerScreenProps> = observer(
   function BankAccountManagerScreen() {
+    const [isOpen, setIsOpen] = useState(false)
     const data: BankAccountData[] = [
       { icon: "ocb", bank: "OCB", accountNumber: "12312345678901897" },
       { icon: "vcb", bank: "VietcomBank", accountNumber: "12312345678901897" },
     ]
+
+    const handleOpenModalOnPress = () => {
+      setIsOpen(true)
+    }
 
     const encryptAccountNumber = (accountNumber: string): string => {
       return (
@@ -40,7 +52,7 @@ export const BankAccountManagerScreen: FC<BankAccountManagerScreenProps> = obser
         <View style={$headerContainer}>
           <BackButton />
           <Text style={$title} tx="bankAccount" />
-          <AddButton />
+          <AddButton onPress={handleOpenModalOnPress} />
         </View>
         <ScrollView contentContainerStyle={$container}>
           {data.map((value, index) => (
@@ -53,6 +65,12 @@ export const BankAccountManagerScreen: FC<BankAccountManagerScreenProps> = obser
             />
           ))}
         </ScrollView>
+        <AddBankAccountModal
+          visibility={isOpen}
+          setVisibility={setIsOpen}
+          cancelButtonTitleTx="cancel"
+          actionButtonTitleTx="confirm"
+        />
       </SafeAreaView>
     )
   },

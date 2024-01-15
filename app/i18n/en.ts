@@ -82,6 +82,7 @@ const en = {
   car: "Car",
   motorbike: "Motorbike",
   truck: "Truck",
+  cardNumber: "Card number",
 }
 
 export default en

@@ -33,7 +33,7 @@ export interface LogoutModalProps {
 export const LogoutModal = observer(function LogoutModal(props: LogoutModalProps) {
   const { style, actionButtonTitleTx, cancelButtonTitleTx, visibility, setVisibility } = props
 
-  const handleDismissBookingModalOnPress = () => {
+  const handleDismissModalOnPress = () => {
     setVisibility(false)
   }
 
@@ -45,8 +45,8 @@ export const LogoutModal = observer(function LogoutModal(props: LogoutModalProps
     <Modal
       style={appStyle.flex1}
       isVisible={visibility}
-      onBackButtonPress={handleDismissBookingModalOnPress}
-      onBackdropPress={handleDismissBookingModalOnPress}
+      onBackButtonPress={handleDismissModalOnPress}
+      onBackdropPress={handleDismissModalOnPress}
       backdropTransitionOutTiming={0}
     >
       <View style={[$container, style]}>
@@ -58,7 +58,7 @@ export const LogoutModal = observer(function LogoutModal(props: LogoutModalProps
             style={$button}
             titleTx={cancelButtonTitleTx}
             color={colors.palette.primary100}
-            onPress={handleDismissBookingModalOnPress}
+            onPress={handleDismissModalOnPress}
           />
           <SecondaryButton
             style={$button}

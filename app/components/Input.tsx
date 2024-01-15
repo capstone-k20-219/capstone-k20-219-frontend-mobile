@@ -116,11 +116,13 @@ const $labelText: TextStyle = {
 const $inputWrapper = (isOutLine: boolean): ViewStyle => ({
   flexDirection: "row",
   alignItems: "center",
-  borderBottomWidth: isOutLine ? 0 : 1,
+  borderWidth: isOutLine ? 1 : 0,
+  borderBottomWidth: 1,
   borderRadius: isOutLine ? 5 : 0,
   borderColor: colors.border,
   paddingVertical: 5,
   paddingHorizontal: 10,
+  height: 40,
 })
 
 const $input = (textColor: string): TextStyle => ({
