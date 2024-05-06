@@ -30,4 +30,5 @@ export const colors = {
   errorBackground: palette.angry100,
   white: "#FFFFFF",
   black: "#000000",
+  successGreen: "#4BD865",
 }

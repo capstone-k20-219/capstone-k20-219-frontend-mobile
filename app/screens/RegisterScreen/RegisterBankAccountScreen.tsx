@@ -59,8 +59,8 @@ export const RegisterBankAccountScreen: FC<RegisterBankAccountScreenProps> = obs
           <ScrollView contentContainerStyle={$scrollViewContainer}>
             <Input
               control={control}
-              controlName="plateNumber"
-              placeHolderTx="plateNumber"
+              controlName="bankName"
+              placeHolderTx="bankName"
               onSubmitEditing={handleFocusNextInputOnPress}
               blurOnSubmit={false}
               returnKeyType="next"

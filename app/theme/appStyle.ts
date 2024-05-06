@@ -25,4 +25,10 @@ export const appStyle = StyleSheet.create({
   maxHeightHalfScreen: {
     maxHeight: sizes.screenHeight * 0.5,
   },
+  displayNone: {
+    display: "none",
+  },
+  opacity0: {
+    opacity: 0,
+  },
 })

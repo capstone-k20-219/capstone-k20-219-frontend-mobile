@@ -151,7 +151,11 @@ const AppStack = observer(function AppStack() {
       <Stack.Screen
         name="Setting"
         component={Screens.SettingScreen}
-        options={{ animation: "slide_from_right" }}
+        options={{
+          animation: "slide_from_right",
+          statusBarColor: colors.palette.primary100,
+          statusBarStyle: "light",
+        }}
       />
 
       <Stack.Screen

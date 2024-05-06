@@ -267,7 +267,7 @@ function Checkbox(props: ToggleInputProps) {
     disabled && colors.palette.neutral400,
     status === "error" && colors.error,
     !on && colors.palette.neutral800,
-    colors.palette.secondary500,
+    colors.black,
   ].filter(Boolean)[0]
 
   const onBackgroundColor = [
@@ -395,7 +395,7 @@ function Switch(props: ToggleInputProps) {
   const onBackgroundColor = [
     disabled && colors.transparent,
     status === "error" && colors.errorBackground,
-    colors.palette.secondary500,
+    colors.successGreen,
   ].filter(Boolean)[0]
 
   const knobBackgroundColor = (function () {
@@ -404,14 +404,14 @@ function Switch(props: ToggleInputProps) {
         $detailStyleOverride?.backgroundColor,
         status === "error" && colors.error,
         disabled && colors.palette.neutral600,
-        colors.palette.neutral100,
+        colors.white,
       ].filter(Boolean)[0]
     } else {
       return [
         $innerStyleOverride?.backgroundColor,
         disabled && colors.palette.neutral600,
         status === "error" && colors.error,
-        colors.palette.neutral200,
+        colors.white,
       ].filter(Boolean)[0]
     }
   })()

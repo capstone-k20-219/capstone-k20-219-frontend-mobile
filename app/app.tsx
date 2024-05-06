@@ -62,7 +62,7 @@ interface AppProps {
 function App(props: AppProps) {
   const { hideSplashScreen } = props
   const {
-    // initialNavigationState,
+    initialNavigationState,
     onNavigationStateChange,
     isRestored: isNavigationStateRestored,
   } = useNavigationPersistence(storage, NAVIGATION_PERSISTENCE_KEY)
@@ -98,7 +98,7 @@ function App(props: AppProps) {
       <ErrorBoundary catchErrors={Config.catchErrors}>
         <AppNavigator
           linking={linking}
-          // initialState={initialNavigationState}
+          initialState={initialNavigationState}
           onStateChange={onNavigationStateChange}
         />
       </ErrorBoundary>

@@ -82,7 +82,16 @@ const en = {
   car: "Car",
   motorbike: "Motorbike",
   truck: "Truck",
+  bus: "Bus",
+  bicycle: "Bicycle",
   cardNumber: "Card number",
+  language: "Language",
+  en: "English",
+  vn: "Vietnamese",
+  version: "Version",
+  darkMode: "Dark mode",
+  notification: "Notification",
+  reportBug: "Report a bug",
 }
 
 export default en

@@ -29,4 +29,9 @@ export const iconRegistry = {
   user: require("../../assets/icons/user.png"),
   vcb: require("../../assets/icons/vcb.png"),
   noVehicle: require("../../assets/icons/noVehicle.png"),
+  language: require("../../assets/icons/language.png"),
+  version: require("../../assets/icons/version.png"),
+  darkMode: require("../../assets/icons/darkMode.png"),
+  notification: require("../../assets/icons/notification.png"),
+  bug: require("../../assets/icons/bug.png"),
 }
