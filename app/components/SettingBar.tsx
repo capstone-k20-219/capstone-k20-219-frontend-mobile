@@ -28,7 +28,6 @@ import { appStyle, colors, typography } from "app/theme"
 
 // i18n
 import { TxKeyPath } from "app/i18n"
-import I18n from "i18n-js"
 
 type SettingBarProps = {
   style?: StyleProp<ViewStyle>
@@ -86,16 +85,12 @@ export const SettingBar = observer(function SettingBar(props: SettingBarProps) {
     setIsOpen(false)
     if (titleTx === "language") {
       if (option === "en") {
-        I18n.locale = "en-US"
         await AsyncStorage.setItem("language", "en-US")
       } else {
-        I18n.locale = option
         await AsyncStorage.setItem("language", option)
       }
-    }
-    await AsyncStorage.removeItem("lastRoute")
-    setOption(option)
-    DevSettings.reload()
+      DevSettings.reload()
+    } else setOption(option)
   }
 
   return (

@@ -28,9 +28,23 @@ export const SettingScreen: FC<SettingScreenProps> = observer(function SettingSc
       </View>
       <ScrollView contentContainerStyle={$container}>
         <View style={$listContainer}>
-          <SettingBar titleTx="darkMode" icon="darkMode" toggleBar={true} iconsize={18} />
+          <SettingBar
+            titleTx="darkMode"
+            icon="darkMode"
+            toggleBar={true}
+            iconsize={18}
+            disabled
+            activeOpacity={1}
+          />
 
-          <SettingBar titleTx="notification" icon="notification" toggleBar={true} iconsize={18} />
+          <SettingBar
+            titleTx="notification"
+            icon="notification"
+            toggleBar={true}
+            iconsize={18}
+            disabled
+            activeOpacity={1}
+          />
           <SettingBar
             titleTx="language"
             currentOption={true}
