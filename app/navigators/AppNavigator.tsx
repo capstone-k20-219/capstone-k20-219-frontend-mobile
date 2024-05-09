@@ -9,6 +9,7 @@ import Config from "../config"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import { TabNavigator } from "./TabNavigator"
+import { useStores } from "app/models"
 
 export type AppStackParamList = {
   Login: undefined
@@ -48,6 +49,8 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = NativeStack
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
+  const rootStore = useStores()
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -56,7 +59,7 @@ const AppStack = observer(function AppStack() {
         statusBarColor: colors.white,
         statusBarStyle: "dark",
       }}
-      initialRouteName="Login"
+      initialRouteName={rootStore.isLoggedIn ? "Home" : "Login"}
     >
       <Stack.Screen
         name="Home"

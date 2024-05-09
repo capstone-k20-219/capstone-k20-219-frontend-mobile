@@ -9,9 +9,9 @@ import { ApisauceInstance, create } from "apisauce"
 import Config from "../../config"
 import type { ApiConfig } from "./api.types"
 
-/**
- * Configuring the apisauce instance.
- */
+// services
+import { AuthApi } from "../authentication/auth"
+
 export const DEFAULT_API_CONFIG: ApiConfig = {
   url: Config.API_URL,
   timeout: 10000,
@@ -25,18 +25,24 @@ export class Api {
   apisauce: ApisauceInstance
   config: ApiConfig
 
-  /**
-   * Set up our API instance. Keep this lightweight!
-   */
+  // API instances
+  auth: AuthApi
+
   constructor(config: ApiConfig = DEFAULT_API_CONFIG) {
     this.config = config
     this.apisauce = create({
       baseURL: this.config.url,
       timeout: this.config.timeout,
       headers: {
-        Accept: "application/json",
+        "Content-type": "application/json",
       },
     })
+    this.initialize()
+  }
+
+  // initialize API instances
+  initialize() {
+    this.auth = new AuthApi(this.apisauce)
   }
 }
 

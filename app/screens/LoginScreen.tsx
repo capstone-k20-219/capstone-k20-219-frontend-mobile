@@ -24,6 +24,10 @@ import { sizes } from "app/constants"
 
 // hooks
 import { useForm } from "react-hook-form"
+import { useStores } from "app/models"
+
+// interfaces
+import { LoginInfo } from "app/services/authentication/auth.types"
 
 // themes
 import { appStyle, colors, images, typography } from "app/theme"
@@ -31,25 +35,21 @@ import { appStyle, colors, images, typography } from "app/theme"
 
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
-interface FormData {
-  emailOrPhoneNumber?: string
-  password: string
-}
-
 const schema = yup
   .object({
-    emailOrPhoneNumber: yup.string(),
+    email: yup.string(),
     password: yup.string().required("passwordRequired"),
   })
   .required()
 
 export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(props) {
   const passwordRef = useRef(null)
+  const rootStore = useStores()
 
-  const { handleSubmit, control, reset } = useForm<FormData>({
+  const { handleSubmit, control, reset } = useForm<LoginInfo>({
     resolver: yupResolver<any>(schema),
     defaultValues: {
-      emailOrPhoneNumber: "",
+      email: "",
       password: "",
     },
   })
@@ -58,9 +58,10 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(p
     passwordRef.current?.focus()
   }
 
-  const handleSubmitOnPress = (data: FormData) => {
+  const handleSubmitOnPress = (data: LoginInfo) => {
     console.log(data)
-    if (data.emailOrPhoneNumber === "0818314202" && data.password === "Huuduc27072002") {
+    rootStore.postAuth(data)
+    if (rootStore.isLoggedIn) {
       props.navigation.navigate("Home")
       reset()
     }
@@ -78,7 +79,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(p
           <View style={$inputContainer}>
             <Input
               control={control}
-              controlName="emailOrPhoneNumber"
+              controlName="email"
               placeHolderTx="emailOrPhone"
               // error={(errors.email?.message ? errors.email?.message : errors.phoneNumber?.message) as TxKeyPath}
               onSubmitEditing={handleNextInputFocusOnPress}
