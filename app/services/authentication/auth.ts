@@ -7,7 +7,7 @@ import { GeneralApiProblem, getGeneralApiProblem } from "../api/apiProblem"
 import { LoginInfo } from "./auth.types"
 
 // async storage
-import { saveString } from "../../utils/storage/storage"
+import { saveString, loadString } from "../../utils/storage/storage"
 
 export class AuthApi {
   private api: ApisauceInstance
@@ -24,6 +24,39 @@ export class AuthApi {
         await saveString("refresh_token", response.data.refresh_token)
         await saveString("access_token", response.data.access_token)
         return { kind: "ok", data: response.data.id }
+      }
+      throw new Error(JSON.stringify(getGeneralApiProblem(response)))
+    } catch (e) {
+      console.log(e)
+      return { kind: "unknown", temporary: true }
+    }
+  }
+
+  async postLogout(): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
+    try {
+      const refreshToken = await loadString("refresh_token")
+      const response: ApiResponse<any> = await this.api.post(`/auth/logout`, {
+        refresh_token: refreshToken,
+      })
+      if (response.ok) {
+        return { kind: "ok", data: response.data }
+      }
+      throw new Error(JSON.stringify(getGeneralApiProblem(response)))
+    } catch (e) {
+      console.log(e)
+      return { kind: "unknown", temporary: true }
+    }
+  }
+
+  async postRefreshToken(): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
+    try {
+      const refreshToken = await loadString("refresh_token")
+      const response: ApiResponse<any> = await this.api.post(`/auth/refresh`, {
+        refresh_token: refreshToken,
+      })
+      if (response.ok) {
+        await saveString("access_token", response.data.access_token)
+        return { kind: "ok", data: response.data }
       }
       throw new Error(JSON.stringify(getGeneralApiProblem(response)))
     } catch (e) {

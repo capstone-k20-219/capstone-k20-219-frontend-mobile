@@ -50,7 +50,7 @@ const vn: Translations = {
   setting: "Cài đặt",
   logout: "Đăng xuất",
   edit: "Chỉnh sửa",
-  vehicleList: "DANH SÁCH PHƯƠNG TIỆN",
+  vehicleList: "Phương tiện",
   serviceBooking: "Đặt dịch vụ",
   serviceList: "Danh sách dịch vụ",
   addNewVehicle: "THÊM PHƯƠNG TIỆN",
