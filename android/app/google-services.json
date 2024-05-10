@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1073336868430",
+    "firebase_url": "https://pakislot-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "pakislot",
+    "storage_bucket": "pakislot.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073336868430:android:7d8ffb49e13b42aa7bad1f",
+        "android_client_info": {
+          "package_name": "com.capstoneprojectk20219frontendmobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfucaXZv25NbjzE9o2qp7Q6ZS0WoPfWxY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
