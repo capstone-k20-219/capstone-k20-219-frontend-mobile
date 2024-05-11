@@ -4,7 +4,7 @@ import { ApiResponse, ApisauceInstance } from "apisauce"
 import { GeneralApiProblem, getGeneralApiProblem } from "../api/apiProblem"
 
 // interfaces
-import { RegisterInfo } from "./user.types"
+import { RegisterInfo, UpdateInfo } from "./user.types"
 
 export class UserApi {
   private api: ApisauceInstance
@@ -28,16 +28,12 @@ export class UserApi {
     }
   }
 
-  async putUserInfo(payload: RegisterInfo): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    try {
-      const response: ApiResponse<any> = await this.api.put(`/users`, payload)
-      if (response.ok) {
-        return { kind: "ok", data: response.data }
-      }
-      throw new Error(JSON.stringify(getGeneralApiProblem(response)))
-    } catch (e) {
-      console.log(e)
-      return { kind: "unknown", temporary: true }
+  async putUserInfo(payload: UpdateInfo): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.api.put(`/users`, payload)
+    if (response.ok) {
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
     }
   }
 

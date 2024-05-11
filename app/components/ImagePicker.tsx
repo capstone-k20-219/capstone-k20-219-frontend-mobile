@@ -9,9 +9,11 @@ import { Icon } from "./Icon"
 
 // hooks
 import { UseFormSetValue } from "react-hook-form"
+import { useStores } from "app/models"
 
 // image picker
 import { launchImageLibrary } from "react-native-image-picker"
+import { colors } from "app/theme"
 
 export interface ImagePickerProps {
   style?: StyleProp<ViewStyle>
@@ -24,57 +26,51 @@ export interface ImagePickerProps {
 }
 
 export const ImagePicker = observer(function ImagePicker(props: ImagePickerProps) {
-  const {
-    style,
-    defaultImage,
-    width = 100,
-    height = 100,
-    imageStyle,
-    activeOpacity = 0.7,
-    setValue,
-  } = props
+  const { style, defaultImage, width = 140, height = 140, imageStyle, activeOpacity = 0.7 } = props
   const [uri, setUri] = useState(defaultImage)
+  const rootStore = useStores()
 
   const handleImagePickerOnPress = async () => {
     const result = await launchImageLibrary({ mediaType: "photo", quality: 1 })
-    if (!result.didCancel && result.errorCode) {
+    if (!result.didCancel && !result.errorCode) {
       setUri(result.assets[0].uri)
-      setValue("image", result.assets[0].fileName)
+      rootStore.putUploadAvatar(result.assets[0].uri)
     }
   }
 
   return (
-    <View style={[$container, style]}>
+    <View style={[$container(width, height), style]}>
       <Image style={[$image(width, height), imageStyle]} source={{ uri }} />
       <TouchableOpacity
         style={$uploadButton}
         activeOpacity={activeOpacity}
         onPress={handleImagePickerOnPress}
       >
-        <Icon icon="bug" />
+        <Icon icon="addCircle" size={21} color={colors.black} />
       </TouchableOpacity>
     </View>
   )
 })
 
-const $container: ViewStyle = {
+const $container = (width: number | string, height: number | string): ViewStyle => ({
   justifyContent: "center",
   alignItems: "center",
-  borderColor: "black",
-  borderWidth: 1,
-  borderRadius: 50,
-}
+  width,
+  height,
+  alignSelf: "center",
+})
 
 const $image = (width: number | string, height: number | string): ImageStyle => ({
   width,
   height,
+  borderRadius: 70,
 })
 
 const $uploadButton: ViewStyle = {
   position: "absolute",
-  bottom: 0,
-  right: 0,
-  padding: 5,
-  backgroundColor: "white",
+  bottom: 5,
+  right: 5,
+  padding: 3,
   borderRadius: 50,
+  backgroundColor: colors.white,
 }

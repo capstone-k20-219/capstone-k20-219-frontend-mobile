@@ -19,3 +19,10 @@ export interface RegisterInfo {
   bankAccount: BankAccount[]
   role: UserRoleEnum[]
 }
+
+export interface UpdateInfo {
+  email?: string
+  dob?: Date
+  phone?: string
+  image?: string
+}

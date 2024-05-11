@@ -7,16 +7,20 @@ import { AppStackScreenProps } from "app/navigators"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 // components
-import { Text, BackButton, SecondaryButton, Input, ImagePicker } from "app/components"
+import { Text, BackButton, SecondaryButton, Input, ImagePicker, Picker } from "app/components"
 
 // hooks
 import { useForm } from "react-hook-form"
+import { useStores } from "app/models"
 
 // themes
 import { appStyle, colors, typography } from "app/theme"
 
 // constants
 import { sizes } from "app/constants"
+
+// date-fns
+import { format } from "date-fns"
 
 interface ProfileScreenProps extends AppStackScreenProps<"Profile"> {}
 
@@ -29,15 +33,17 @@ interface FormData {
 }
 
 export const ProfileScreen: FC<ProfileScreenProps> = observer(function ProfileScreen() {
+  const rootStore = useStores()
   const [isDisabled, setIsDisabled] = useState(true)
-  const inputRef = Array.from({ length: 5 }, () => useRef(null))
+  const [date, setDate] = useState(new Date(rootStore.userInfo.dob))
+  const inputRef = Array.from({ length: 2 }, () => useRef(null))
   const { handleSubmit, control, setValue } = useForm<FormData>({
     defaultValues: {
-      dateOfBirth: "27/07/2002",
-      phoneNumber: "0818314202",
-      email: "duc.phamhuuduc2707@hcmut.edu.vn",
-      password: "Huuduc27072002",
-      confirmPassword: "",
+      dateOfBirth: format(rootStore.userInfo.dob, "dd/MM/yyyy"),
+      phoneNumber: rootStore.userInfo.phone,
+      email: rootStore.userInfo.email,
+      // password: "",
+      // confirmPassword: "",
     },
   })
 
@@ -46,8 +52,12 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(function ProfileSc
   }
 
   const handleSubmitOnPress = (data: FormData) => {
-    console.log(data)
     setIsDisabled(true)
+    rootStore.putUpdateUserInfo({
+      email: data.email,
+      dob: date,
+      phone: data.phoneNumber,
+    })
   }
 
   const handleFocusNextInputOnPress = (index: number) => {
@@ -59,18 +69,26 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(function ProfileSc
       <KeyboardAvoidingView style={appStyle.flex1} behavior="padding">
         <View style={$headerContainer}>
           <BackButton />
-          <ImagePicker
-            defaultImage="https://firebasestorage.googleapis.com/v0/b/pakislot.appspot.com/o/avatar_images%2Fdefault_avatar%2Fastronaut.png?alt=media&token=0cab0823-1d3b-4cdc-8201-f891b6cbcc04"
-            setValue={setValue}
-          />
+          <ImagePicker defaultImage={rootStore.userInfo.image} />
           <Text style={$headerText} text="PHAM HUU DUC" />
         </View>
         <ScrollView contentContainerStyle={$container}>
-          <Input
-            ref={inputRef[0]}
+          <Picker
             control={control}
             controlName="dateOfBirth"
             labelTx="dateOfBirth"
+            type="date"
+            disabled={isDisabled}
+            isOutline={true}
+            setValue={setValue}
+            state={date}
+            setState={setDate}
+          />
+          <Input
+            ref={inputRef[0]}
+            control={control}
+            controlName="phoneNumber"
+            labelTx="phoneNumber"
             disable={isDisabled}
             inputWrapperStyle={$inputWrapper}
             onSubmitEditing={() => handleFocusNextInputOnPress(0)}
@@ -80,26 +98,14 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(function ProfileSc
           <Input
             ref={inputRef[1]}
             control={control}
-            controlName="phoneNumber"
-            labelTx="phoneNumber"
-            disable={isDisabled}
-            inputWrapperStyle={$inputWrapper}
-            onSubmitEditing={() => handleFocusNextInputOnPress(1)}
-            returnKeyType="next"
-            blurOnSubmit={false}
-          />
-          <Input
-            ref={inputRef[2]}
-            control={control}
             controlName="email"
             labelTx="email"
             disable={isDisabled}
             inputWrapperStyle={$inputWrapper}
-            onSubmitEditing={() => handleFocusNextInputOnPress(2)}
-            returnKeyType="next"
-            blurOnSubmit={false}
+            onSubmitEditing={() => handleFocusNextInputOnPress(1)}
+            returnKeyType="done"
           />
-          <Input
+          {/* <Input
             ref={inputRef[3]}
             control={control}
             controlName="password"
@@ -122,7 +128,7 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(function ProfileSc
             inputWrapperStyle={$inputWrapper}
             onSubmitEditing={() => handleFocusNextInputOnPress(4)}
             returnKeyType="done"
-          />
+          /> */}
           {isDisabled ? (
             <SecondaryButton
               titleTx="edit"
@@ -159,7 +165,7 @@ const $headerContainer: ViewStyle = {
   paddingBottom: 58,
   backgroundColor: colors.palette.primary100,
   paddingHorizontal: 16,
-  rowGap: 57,
+  rowGap: 35,
 }
 
 const $headerText: TextStyle = {
@@ -203,6 +209,6 @@ const $inputWrapper: ViewStyle = {
   borderColor: colors.palette.neutral300,
 }
 
-const $display = (isDisabled: boolean): ViewStyle => ({
-  display: isDisabled ? "none" : "flex",
-})
+// const $display = (isDisabled: boolean): ViewStyle => ({
+//   display: isDisabled ? "none" : "flex",
+// })

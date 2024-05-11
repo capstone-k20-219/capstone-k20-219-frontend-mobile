@@ -13,7 +13,7 @@ import { api } from "app/services/api"
 
 // interfaces
 import { LoginInfo } from "app/services/authentication/auth.types"
-import { RegisterInfo } from "app/services/user/user.types"
+import { RegisterInfo, UpdateInfo } from "app/services/user/user.types"
 
 // async storage
 import { remove } from "app/utils/storage/storage"
@@ -124,6 +124,29 @@ export const RootStoreModel = types
       } else {
         alert(JSON.stringify(response))
       }
+    }),
+  }))
+  .actions((store) => ({
+    putUpdateUserInfo: flow(function* (payload: UpdateInfo) {
+      let response = yield api.user.putUserInfo(payload)
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.user.putUserInfo(payload)
+      }
+      if (response.kind === "ok") {
+        if (payload.email) store.userInfo.setProp("email", payload.email)
+        if (payload.dob) store.userInfo.setProp("dob", payload.dob)
+        if (payload.phone) store.userInfo.setProp("phone", payload.phone)
+        if (payload.image) store.userInfo.setProp("image", payload.image)
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions((store) => ({
+    putUploadAvatar: flow(function* (uri: string) {
+      const imageURL = yield api.firebase.uploadAvatarImage(uri)
+      store.putUpdateUserInfo({ image: imageURL })
     }),
   }))
   .views((store) => ({
