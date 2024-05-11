@@ -1,4 +1,4 @@
-import React, { FC, useRef } from "react"
+import React, { FC, useRef, useEffect } from "react"
 
 // modules
 import { observer } from "mobx-react-lite"
@@ -59,17 +59,20 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(p
   }
 
   const handleSubmitOnPress = (data: LoginInfo) => {
-    console.log(data)
     rootStore.postAuth(data)
-    if (rootStore.isLoggedIn) {
-      props.navigation.navigate("Home")
-      reset()
-    }
   }
 
   const handleRegisterOnPress = () => {
     props.navigation.navigate("RegisterPersonalInfo")
   }
+
+  useEffect(() => {
+    if (rootStore.isLoggedIn) {
+      rootStore.getUserInfo()
+      props.navigation.navigate("Home")
+      reset()
+    }
+  }, [rootStore.isLoggedIn])
 
   return (
     <SafeAreaView style={appStyle.rootContainer}>

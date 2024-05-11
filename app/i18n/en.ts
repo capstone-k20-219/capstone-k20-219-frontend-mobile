@@ -92,6 +92,10 @@ const en = {
   darkMode: "Dark mode",
   notification: "Notification",
   reportBug: "Report a bug",
+  sessionExpired: "Your session has expired. Please login again.",
+  sessionExpiredTitle: "Session Expired",
+  invalidCredentials: "Invalid credentials. Please try again.",
+  invalidCredentialsTitle: "Invalid Credentials",
 }
 
 export default en

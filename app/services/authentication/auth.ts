@@ -22,7 +22,6 @@ export class AuthApi {
       if (response.ok) {
         this.api.setHeader("Authorization", `Bearer ${response.data.access_token}`)
         await saveString("refresh_token", response.data.refresh_token)
-        await saveString("access_token", response.data.access_token)
         return { kind: "ok", data: response.data.id }
       }
       throw new Error(JSON.stringify(getGeneralApiProblem(response)))
@@ -33,35 +32,27 @@ export class AuthApi {
   }
 
   async postLogout(): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    try {
-      const refreshToken = await loadString("refresh_token")
-      const response: ApiResponse<any> = await this.api.post(`/auth/logout`, {
-        refresh_token: refreshToken,
-      })
-      if (response.ok) {
-        return { kind: "ok", data: response.data }
-      }
-      throw new Error(JSON.stringify(getGeneralApiProblem(response)))
-    } catch (e) {
-      console.log(e)
-      return { kind: "unknown", temporary: true }
+    const refreshToken = await loadString("refresh_token")
+    const response: ApiResponse<any> = await this.api.post(`/auth/log-out`, {
+      refresh_token: refreshToken,
+    })
+    if (response.ok) {
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
     }
   }
 
   async postRefreshToken(): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    try {
-      const refreshToken = await loadString("refresh_token")
-      const response: ApiResponse<any> = await this.api.post(`/auth/refresh`, {
-        refresh_token: refreshToken,
-      })
-      if (response.ok) {
-        await saveString("access_token", response.data.access_token)
-        return { kind: "ok", data: response.data }
-      }
-      throw new Error(JSON.stringify(getGeneralApiProblem(response)))
-    } catch (e) {
-      console.log(e)
-      return { kind: "unknown", temporary: true }
+    const refreshToken = await loadString("refresh_token")
+    const response: ApiResponse<any> = await this.api.post(`/auth/refresh`, {
+      refresh_token: refreshToken,
+    })
+    if (response.ok) {
+      this.api.setHeader("Authorization", `Bearer ${response.data.access_token}`)
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
     }
   }
 }

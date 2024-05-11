@@ -11,6 +11,7 @@ import { RegisterProgessBar, BackButton, PrimaryHeader, Input, PrimaryButton } f
 
 // hooks
 import { useForm } from "react-hook-form"
+import { useStores } from "app/models"
 
 // themes
 import { appStyle } from "app/theme"
@@ -28,6 +29,7 @@ interface FormData {
 export const RegisterBankAccountScreen: FC<RegisterBankAccountScreenProps> = observer(
   function RegisterBankAccountScreen(props) {
     const inputRef = useRef(null)
+    const rootStore = useStores()
     const { handleSubmit, control } = useForm<FormData>({
       defaultValues: {
         bankName: "",
@@ -37,10 +39,12 @@ export const RegisterBankAccountScreen: FC<RegisterBankAccountScreenProps> = obs
 
     const handleSubmitOnPress = (data: FormData) => {
       console.log(data)
+      rootStore.postRegister()
       props.navigation.navigate("RegisterSuccess")
     }
 
     const handleSkipOnPress = () => {
+      rootStore.postRegister()
       props.navigation.navigate("RegisterSuccess")
     }
 

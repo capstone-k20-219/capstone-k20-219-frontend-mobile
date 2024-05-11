@@ -47,6 +47,8 @@ export const RegisterVehicleScreen: FC<RegisterVehicleScreenProps> = observer(
 
     const handleSubmitOnPress = (data: FormData) => {
       console.log(data)
+      // rootStore.userInfo.setProp("vehicle", [{plateNo: data.plateNumber, typeId: data.vehicleType}])
+      // console.log(JSON.stringify(rootStore.userInfo.vehicle))
       props.navigation.navigate("RegisterBankAccount")
     }
 

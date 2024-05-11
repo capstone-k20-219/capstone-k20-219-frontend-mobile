@@ -18,6 +18,7 @@ import {
 
 // hooks
 import { useForm } from "react-hook-form"
+import { useStores } from "app/models"
 
 // themes
 import { appStyle } from "app/theme"
@@ -43,6 +44,7 @@ export const RegisterPersonalInfoScreen: FC<RegisterPersonalInfoScreenProps> = o
   function RegisterPersonalInfoScreen(props) {
     const [date, setDate] = useState(new Date())
     const inputRef = Array.from({ length: 4 }, () => useRef(null))
+    const rootStore = useStores()
     const { handleSubmit, control, setValue } = useForm<FormData>({
       defaultValues: {
         fullName: "",
@@ -56,7 +58,12 @@ export const RegisterPersonalInfoScreen: FC<RegisterPersonalInfoScreenProps> = o
 
     const handleSubmitOnPress = (data: FormData) => {
       if (data.password === data.confirmPassword && data.password !== "") {
-        console.log(data)
+        rootStore.userInfo.setProp("name", data.fullName)
+        rootStore.userInfo.setProp("dob", date)
+        rootStore.userInfo.setProp("phone", data.phoneNumber)
+        rootStore.userInfo.setProp("email", data.email)
+        rootStore.userInfo.setProp("password", data.password)
+        rootStore.userInfo.setProp("role", ["user"])
         props.navigation.navigate("RegisterVehicle")
       }
     }

@@ -7,7 +7,7 @@ import { AppStackScreenProps } from "app/navigators"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 // components
-import { Text, BackButton, SecondaryButton, Input } from "app/components"
+import { Text, BackButton, SecondaryButton, Input, ImagePicker } from "app/components"
 
 // hooks
 import { useForm } from "react-hook-form"
@@ -31,7 +31,7 @@ interface FormData {
 export const ProfileScreen: FC<ProfileScreenProps> = observer(function ProfileScreen() {
   const [isDisabled, setIsDisabled] = useState(true)
   const inputRef = Array.from({ length: 5 }, () => useRef(null))
-  const { handleSubmit, control } = useForm<FormData>({
+  const { handleSubmit, control, setValue } = useForm<FormData>({
     defaultValues: {
       dateOfBirth: "27/07/2002",
       phoneNumber: "0818314202",
@@ -59,6 +59,10 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(function ProfileSc
       <KeyboardAvoidingView style={appStyle.flex1} behavior="padding">
         <View style={$headerContainer}>
           <BackButton />
+          <ImagePicker
+            defaultImage="https://firebasestorage.googleapis.com/v0/b/pakislot.appspot.com/o/avatar_images%2Fdefault_avatar%2Fastronaut.png?alt=media&token=0cab0823-1d3b-4cdc-8201-f891b6cbcc04"
+            setValue={setValue}
+          />
           <Text style={$headerText} text="PHAM HUU DUC" />
         </View>
         <ScrollView contentContainerStyle={$container}>

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 // modules
 import { StyleProp, TextStyle, View, ViewStyle } from "react-native"
@@ -22,6 +22,9 @@ import { TxKeyPath } from "app/i18n"
 // constants
 import { sizes } from "app/constants"
 
+// hooks
+import { useStores } from "app/models"
+
 export interface LogoutModalProps {
   style?: StyleProp<ViewStyle>
   actionButtonTitleTx?: TxKeyPath
@@ -32,14 +35,22 @@ export interface LogoutModalProps {
 
 export const LogoutModal = observer(function LogoutModal(props: LogoutModalProps) {
   const { style, actionButtonTitleTx, cancelButtonTitleTx, visibility, setVisibility } = props
+  const rootStore = useStores()
 
   const handleDismissModalOnPress = () => {
     setVisibility(false)
   }
 
   const handleLogoutOnPress = () => {
-    navigationRef.navigate("Login")
+    setVisibility(false)
+    rootStore.postLogout()
   }
+
+  useEffect(() => {
+    if (!rootStore.isLoggedIn) {
+      navigationRef.navigate("Login")
+    }
+  }, [rootStore.isLoggedIn])
 
   return (
     <Modal

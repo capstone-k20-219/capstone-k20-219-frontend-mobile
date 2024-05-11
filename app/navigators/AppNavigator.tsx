@@ -1,15 +1,18 @@
 // modules
-import React from "react"
+import React, { useEffect } from "react"
 import { DarkTheme, DefaultTheme, NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import { observer } from "mobx-react-lite"
-import { useColorScheme } from "react-native"
+import { useColorScheme, Alert } from "react-native"
 import * as Screens from "app/screens"
 import Config from "../config"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors } from "app/theme"
 import { TabNavigator } from "./TabNavigator"
 import { useStores } from "app/models"
+import { loadString, remove } from "app/utils/storage"
+import { api } from "app/services/api"
+import { translate } from "app/i18n"
 
 export type AppStackParamList = {
   Login: undefined
@@ -50,6 +53,33 @@ const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
   const rootStore = useStores()
+
+  useEffect(() => {
+    const checkRefreshTokenExpiration = async () => {
+      const token = await loadString("refresh_token")
+      if (token) {
+        const response = await api.auth.postRefreshToken()
+        if (response.kind === "unauthorized") {
+          Alert.alert(
+            translate("sessionExpiredTitle"),
+            translate("sessionExpired"),
+            [
+              {
+                text: "OK",
+                onPress: async () => {
+                  rootStore.setProp("userId", null)
+                  await remove("refresh_token")
+                  navigationRef.navigate("Login")
+                },
+              },
+            ],
+            { cancelable: false },
+          )
+        }
+      }
+    }
+    checkRefreshTokenExpiration()
+  }, [])
 
   return (
     <Stack.Navigator

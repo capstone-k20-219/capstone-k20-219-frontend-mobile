@@ -94,6 +94,10 @@ const vn: Translations = {
   darkMode: "Chế độ tối",
   notification: "Thông báo",
   reportBug: "Báo cáo lỗi",
+  sessionExpired: "Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.",
+  sessionExpiredTitle: "Phiên làm việc đã hết hạn",
+  invalidCredentials: "Thông tin đăng nhập không chính xác. Vui lòng thử lại.",
+  invalidCredentialsTitle: "Thông tin đăng nhập không chính xác",
 }
 
 export default vn

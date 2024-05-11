@@ -40,4 +40,13 @@ export class UserApi {
       return { kind: "unknown", temporary: true }
     }
   }
+
+  async getUserInfo(): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.api.get(`/users`)
+    if (response.ok) {
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
+    }
+  }
 }
