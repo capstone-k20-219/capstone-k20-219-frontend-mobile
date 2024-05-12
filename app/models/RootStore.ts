@@ -146,7 +146,7 @@ export const RootStoreModel = types
   }))
   .actions((store) => ({
     putUploadAvatar: flow(function* (uri: string) {
-      const imageURL = yield api.firebase.uploadAvatarImage(uri)
+      const imageURL = yield api.firebase.uploadAvatarImage(uri, store.userId)
       store.putUpdateUserInfo({ image: imageURL })
     }),
   }))

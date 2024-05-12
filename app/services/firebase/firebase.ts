@@ -16,9 +16,9 @@ export class FirebaseApi {
     return await this.storage.ref(defaultAvatarList[randomIndex].fullPath).getDownloadURL()
   }
 
-  async uploadAvatarImage(uri: string): Promise<string> {
-    const filename = uri.substring(uri.lastIndexOf("/") + 1)
-    const ref = this.storage.ref(`avatar_images/user_upload_avatar/${filename}`)
+  async uploadAvatarImage(uri: string, userId: string): Promise<string> {
+    // const filename = uri.substring(uri.lastIndexOf("/") + 1)
+    const ref = this.storage.ref(`avatar_images/user_upload_avatar/${userId}`)
     await ref.putFile(uri)
     return await ref.getDownloadURL()
   }
