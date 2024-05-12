@@ -2,30 +2,22 @@ import React, { FC } from "react"
 
 // modules
 import { observer } from "mobx-react-lite"
-import { Image, ImageStyle } from "react-native"
+// import { Image, ImageStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-
-// components
 import { SafeAreaView } from "react-native-safe-area-context"
 
-// themes
-import { appStyle, images } from "app/theme"
+// components
+import { ParkingLotMap } from "app/components"
 
-// constants
-import { sizes } from "app/constants"
+// themes
+import { appStyle } from "app/theme"
 
 interface MapScreenProps extends AppStackScreenProps<"Map"> {}
 
 export const MapScreen: FC<MapScreenProps> = observer(function MapScreen() {
   return (
     <SafeAreaView style={appStyle.rootContainer}>
-      <Image style={$image} source={images.map} resizeMode="cover" />
+      <ParkingLotMap interactiveMode={false} />
     </SafeAreaView>
   )
 })
-
-const $image: ImageStyle = {
-  alignSelf: "center",
-  width: sizes.screenWidth * 1,
-  height: sizes.screenHeight * 0.9,
-}

@@ -53,12 +53,30 @@ export const UserInfo = types
   })
   .actions(withSetPropAction)
 
+const SlotType = types.model("SlotType").props({
+  name: types.maybeNull(types.string),
+})
+
+const SlotInfo = types
+  .model("SlotInfo")
+  .props({
+    id: types.maybeNull(types.string),
+    x_start: types.maybeNull(types.number),
+    x_end: types.maybeNull(types.number),
+    y_start: types.maybeNull(types.number),
+    y_end: types.maybeNull(types.number),
+    typeId: types.maybeNull(types.string),
+    type: types.optional(SlotType, {}),
+  })
+  .actions(withSetPropAction)
+
 export const RootStoreModel = types
   .model("RootStore")
   .props({
     userId: types.maybeNull(types.string),
     userInfo: types.optional(UserInfo, {}),
     vehicle: types.array(types.optional(VehicleInfo, {})),
+    slotInfo: types.array(types.optional(SlotInfo, {})),
   })
   .actions(withSetPropAction)
   .actions((store) => ({
@@ -150,9 +168,30 @@ export const RootStoreModel = types
       store.putUpdateUserInfo({ image: imageURL })
     }),
   }))
+  .actions((store) => ({
+    getSlotInfo: flow(function* () {
+      let response = yield api.parkingSlot.getParkingSlots()
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.parkingSlot.getParkingSlots()
+      }
+      if (response.kind === "ok") {
+        store.setProp("slotInfo", response.data)
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
   .views((store) => ({
     get isLoggedIn() {
       return store.userId !== null
+    },
+    get slotOffset() {
+      let minX = store.slotInfo[0].x_start
+      store.slotInfo.forEach((slot) => {
+        if (slot.x_start < minX) minX = slot.x_start
+      })
+      return minX - 24
     },
   }))
 

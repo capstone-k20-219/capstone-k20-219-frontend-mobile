@@ -31,4 +31,5 @@ export const colors = {
   white: "#FFFFFF",
   black: "#000000",
   successGreen: "#4BD865",
+  slotBorder: "#c4c4c4",
 }
