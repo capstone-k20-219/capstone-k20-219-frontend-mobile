@@ -94,6 +94,7 @@ export const RootStoreModel = types
         response = yield api.user.getUserInfo()
       }
       if (response.kind === "ok") {
+        store.setProp("userId", response.data.id)
         store.userInfo.setProp("email", response.data.email)
         store.userInfo.setProp("name", response.data.name)
         store.userInfo.setProp(

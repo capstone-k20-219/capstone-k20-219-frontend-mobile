@@ -76,6 +76,9 @@ const AppStack = observer(function AppStack() {
             { cancelable: false },
           )
         }
+        if (response.kind === "ok") {
+          rootStore.getUserInfo()
+        }
       }
     }
     checkRefreshTokenExpiration()
