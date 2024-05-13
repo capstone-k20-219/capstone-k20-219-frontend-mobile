@@ -35,6 +35,7 @@ export type AppStackParamList = {
   Checkout: undefined
   Service: undefined
   More: undefined
+  Feedback: { id: string; name: string }
 }
 
 /**
@@ -78,6 +79,7 @@ const AppStack = observer(function AppStack() {
         }
         if (response.kind === "ok") {
           rootStore.getUserInfo()
+          rootStore.getSlotInfo()
         }
       }
     }
@@ -197,6 +199,12 @@ const AppStack = observer(function AppStack() {
       <Stack.Screen
         name="BookingSlotCountDown"
         component={Screens.BookingSlotCountDownScreen}
+        options={{ animation: "slide_from_right" }}
+      />
+
+      <Stack.Screen
+        name="Feedback"
+        component={Screens.FeedbackScreen}
         options={{ animation: "slide_from_right" }}
       />
     </Stack.Navigator>

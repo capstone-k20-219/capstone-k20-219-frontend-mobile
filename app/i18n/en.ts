@@ -96,6 +96,10 @@ const en = {
   sessionExpiredTitle: "Session Expired",
   invalidCredentials: "Invalid credentials. Please try again.",
   invalidCredentialsTitle: "Invalid Credentials",
+  feedback: "Feedback",
+  feedbackService: "Service feedback",
+  serviceName: "Service name",
+  feedbackPlaceholder: "Please write your feedback here...",
 }
 
 export default en

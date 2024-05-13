@@ -98,6 +98,10 @@ const vn: Translations = {
   sessionExpiredTitle: "Phiên làm việc đã hết hạn",
   invalidCredentials: "Thông tin đăng nhập không chính xác. Vui lòng thử lại.",
   invalidCredentialsTitle: "Thông tin đăng nhập không chính xác",
+  feedback: "Phản hồi",
+  feedbackService: "Phản hồi dịch vụ",
+  serviceName: "Tên dịch vụ",
+  feedbackPlaceholder: "Nhập phản hồi của bạn...",
 }
 
 export default vn

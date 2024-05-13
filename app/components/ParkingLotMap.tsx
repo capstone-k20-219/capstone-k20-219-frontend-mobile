@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 
 // modules
 import { StyleProp, View, ViewStyle, ScrollView } from "react-native"
@@ -22,10 +22,6 @@ export interface ParkingLotMapProps {
 export const ParkingLotMap = observer(function ParkingLotMap(props: ParkingLotMapProps) {
   const { style, interactiveMode = false } = props
   const rootStore = useStores()
-
-  useEffect(() => {
-    rootStore.getSlotInfo()
-  }, [])
 
   return (
     <ScrollView

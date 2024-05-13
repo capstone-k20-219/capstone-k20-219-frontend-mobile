@@ -1,14 +1,18 @@
 import React, { useState } from "react"
 
 // modules
-import { StyleProp, TextStyle, ViewStyle, TouchableOpacity } from "react-native"
+import { StyleProp, TextStyle, ViewStyle, TouchableOpacity, View } from "react-native"
 import { observer } from "mobx-react-lite"
 
 // components
 import { Text } from "app/components/Text"
+import { Icon } from "./Icon"
 
 // themes
 import { colors, typography } from "app/theme"
+
+// navigation ref
+import { navigationRef } from "app/navigators"
 
 export interface ServiceBoxProps {
   style?: StyleProp<ViewStyle>
@@ -17,10 +21,11 @@ export interface ServiceBoxProps {
   textStyle?: StyleProp<TextStyle>
   price?: string
   activeOpacity?: number
+  serviceId?: string
 }
 
 export const ServiceBox = observer(function ServiceBox(props: ServiceBoxProps) {
-  const { style, setCounter, serviceName, textStyle, price, activeOpacity = 0.7 } = props
+  const { style, setCounter, serviceName, textStyle, price, activeOpacity = 0.7, serviceId } = props
   const [isSelected, setIsSelected] = useState(false)
 
   const handleSelectedOnPress = () => {
@@ -33,13 +38,22 @@ export const ServiceBox = observer(function ServiceBox(props: ServiceBoxProps) {
     }
   }
 
+  const handleFeedbackOnPress = () => {
+    navigationRef.navigate("Feedback", { id: serviceId, name: serviceName })
+  }
+
   return (
     <TouchableOpacity
       style={[$container(isSelected), style]}
       activeOpacity={activeOpacity}
       onPress={handleSelectedOnPress}
     >
-      <Text style={[$serviceText(isSelected), textStyle]} text={serviceName} />
+      <View style={$subContainer}>
+        <Text style={[$serviceText(isSelected), textStyle]} text={serviceName} />
+        <TouchableOpacity activeOpacity={activeOpacity} onPress={handleFeedbackOnPress}>
+          <Icon icon="feedback" size={22} />
+        </TouchableOpacity>
+      </View>
       <Text style={[$priceText(isSelected), textStyle]} text={price} />
     </TouchableOpacity>
   )
@@ -54,6 +68,12 @@ const $container = (isSelected: boolean): ViewStyle => ({
   borderRadius: 5,
   backgroundColor: isSelected ? colors.palette.primary200 : colors.white,
 })
+
+const $subContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  columnGap: 10,
+}
 
 const $serviceText = (isSelected: boolean): TextStyle => ({
   fontFamily: typography.fonts.rubik.regular,

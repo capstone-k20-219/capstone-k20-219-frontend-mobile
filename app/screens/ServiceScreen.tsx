@@ -31,13 +31,14 @@ interface FormData {
 interface VehicleData {
   name?: string
   price?: string
+  serviceId?: string
 }
 export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceScreen() {
   const data: string[] = ["HP234-34.456"]
 
   const vehicleData: VehicleData[] = [
-    { name: "Vehicle washing", price: "$20.00" },
-    { name: "Vehicle washing", price: "$20.00" },
+    { name: "Vehicle washing", price: "$20.00", serviceId: "1" },
+    { name: "Vehicle washing", price: "$20.00", serviceId: "2" },
     { name: "Vehicle washing", price: "$20.00" },
     { name: "Vehicle washing", price: "$20.00" },
   ]
@@ -83,6 +84,7 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
               serviceName={value.name}
               price={value.price}
               setCounter={setCount}
+              serviceId={value.serviceId}
             />
           ))}
         </ScrollView>
