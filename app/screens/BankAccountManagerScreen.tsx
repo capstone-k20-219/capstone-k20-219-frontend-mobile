@@ -7,33 +7,20 @@ import { AppStackScreenProps } from "app/navigators"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 // components
-import {
-  Text,
-  InfoSummaryBox,
-  BackButton,
-  AddButton,
-  IconTypes,
-  AddBankAccountModal,
-} from "app/components"
+import { Text, InfoSummaryBox, BackButton, AddButton, AddBankAccountModal } from "app/components"
+
+// hooks
+import { useStores } from "app/models"
 
 // themes
 import { appStyle, colors, typography } from "app/theme"
 
 interface BankAccountManagerScreenProps extends AppStackScreenProps<"BankAccountManager"> {}
 
-interface BankAccountData {
-  icon?: IconTypes
-  bank?: string
-  accountNumber?: string
-}
-
 export const BankAccountManagerScreen: FC<BankAccountManagerScreenProps> = observer(
   function BankAccountManagerScreen() {
     const [isOpen, setIsOpen] = useState(false)
-    const data: BankAccountData[] = [
-      { icon: "ocb", bank: "OCB", accountNumber: "12312345678901897" },
-      { icon: "vcb", bank: "VietcomBank", accountNumber: "12312345678901897" },
-    ]
+    const rootStore = useStores()
 
     const handleOpenModalOnPress = () => {
       setIsOpen(true)
@@ -55,13 +42,14 @@ export const BankAccountManagerScreen: FC<BankAccountManagerScreenProps> = obser
           <AddButton onPress={handleOpenModalOnPress} />
         </View>
         <ScrollView contentContainerStyle={$container}>
-          {data.map((value, index) => (
+          {rootStore.userInfo.bankAccount.map((value, index) => (
             <InfoSummaryBox
               key={index}
-              icon={value.icon}
+              icon={value.bank === "OCB" ? "ocb" : "vcb"}
               leftIconStyle={$icon}
               title={value.bank}
-              label={encryptAccountNumber(value.accountNumber)}
+              label={encryptAccountNumber(value.accountNo)}
+              accountNo={value.accountNo}
             />
           ))}
         </ScrollView>

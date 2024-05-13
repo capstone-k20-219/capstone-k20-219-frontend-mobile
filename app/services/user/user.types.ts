@@ -1,4 +1,4 @@
-interface BankAccount {
+export interface BankAccount {
   accountNo: string
   bank: string
 }
@@ -25,4 +25,5 @@ export interface UpdateInfo {
   dob?: Date
   phone?: string
   image?: string
+  bankAccount?: BankAccount[]
 }

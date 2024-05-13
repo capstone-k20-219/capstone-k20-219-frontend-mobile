@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 
 // modules
 import { StyleProp, TextStyle, View, ViewStyle, TouchableOpacity, ImageStyle } from "react-native"
@@ -17,6 +17,9 @@ import { TxKeyPath } from "app/i18n"
 // constants
 import { sizes } from "app/constants"
 
+// hooks
+import { useStores } from "app/models"
+
 export interface InfoSummaryBoxProps {
   style?: StyleProp<ViewStyle>
   icon?: IconTypes
@@ -29,6 +32,7 @@ export interface InfoSummaryBoxProps {
   titleStyle?: StyleProp<TextStyle>
   labelStyle?: StyleProp<TextStyle>
   activeOpacity?: number
+  accountNo?: string
 }
 
 export const InfoSummaryBox = observer(function InfoSummaryBox(props: InfoSummaryBoxProps) {
@@ -44,14 +48,16 @@ export const InfoSummaryBox = observer(function InfoSummaryBox(props: InfoSummar
     titleStyle,
     labelStyle,
     activeOpacity = 0.7,
+    accountNo,
   } = props
-  const [isDeleted, setIsDeleted] = useState(false)
+  const rootStore = useStores()
+
   const handleDeleteOnPress = () => {
-    setIsDeleted(true)
+    rootStore.deleteBankAccount({ bank: title, accountNo })
   }
 
   return (
-    <View style={[$container(isDeleted), style]}>
+    <View style={[$container, style]}>
       <Icon style={[$leftIcon, leftIconStyle]} icon={icon} />
       <View style={$textContainer}>
         <Text style={[$title, titleStyle]} tx={titleTx} text={title} />
@@ -64,15 +70,14 @@ export const InfoSummaryBox = observer(function InfoSummaryBox(props: InfoSummar
   )
 })
 
-const $container = (isDeleted: boolean): ViewStyle => ({
+const $container: ViewStyle = {
   padding: 20,
   flexDirection: "row",
   alignItems: "center",
   borderWidth: 1,
   borderColor: colors.palette.neutral300,
   columnGap: 21,
-  display: isDeleted ? "none" : "flex",
-})
+}
 
 const $textContainer: ViewStyle = {
   rowGap: 10,

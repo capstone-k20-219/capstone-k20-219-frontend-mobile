@@ -13,7 +13,7 @@ import { api } from "app/services/api"
 
 // interfaces
 import { LoginInfo } from "app/services/authentication/auth.types"
-import { RegisterInfo, UpdateInfo } from "app/services/user/user.types"
+import { RegisterInfo, UpdateInfo, BankAccount } from "app/services/user/user.types"
 
 // async storage
 import { remove } from "app/utils/storage/storage"
@@ -157,6 +157,7 @@ export const RootStoreModel = types
         if (payload.dob) store.userInfo.setProp("dob", payload.dob)
         if (payload.phone) store.userInfo.setProp("phone", payload.phone)
         if (payload.image) store.userInfo.setProp("image", payload.image)
+        if (payload.bankAccount) store.userInfo.setProp("bankAccount", payload.bankAccount)
       } else {
         alert(JSON.stringify(response))
       }
@@ -177,6 +178,38 @@ export const RootStoreModel = types
       }
       if (response.kind === "ok") {
         store.setProp("slotInfo", response.data)
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions((store) => ({
+    postBankAccount: flow(function* (payload: BankAccount) {
+      const data = [...store.userInfo.bankAccount, payload]
+      let response = yield api.user.putUserInfo({ bankAccount: data })
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.user.putUserInfo({ bankAccount: data })
+      }
+      if (response.kind === "ok") {
+        store.userInfo.setProp("bankAccount", data)
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions((store) => ({
+    deleteBankAccount: flow(function* (payload: BankAccount) {
+      const data = store.userInfo.bankAccount.filter(
+        (item) => item.bank !== payload.bank || item.accountNo !== payload.accountNo,
+      )
+      let response = yield api.user.putUserInfo({ bankAccount: data })
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.user.putUserInfo({ bankAccount: data })
+      }
+      if (response.kind === "ok") {
+        store.userInfo.setProp("bankAccount", data)
       } else {
         alert(JSON.stringify(response))
       }

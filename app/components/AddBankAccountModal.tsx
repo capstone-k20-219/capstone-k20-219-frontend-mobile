@@ -17,12 +17,16 @@ import { appStyle, colors, typography } from "app/theme"
 
 // hooks
 import { useForm } from "react-hook-form"
+import { useStores } from "app/models"
 
 // i18n
 import { TxKeyPath } from "app/i18n"
 
 // constants
 import { sizes } from "app/constants"
+
+// interfaces
+import { BankAccount } from "app/services/user/user.types"
 
 export interface AddBankAccountModalProps {
   style?: StyleProp<ViewStyle>
@@ -32,21 +36,17 @@ export interface AddBankAccountModalProps {
   setVisibility?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-interface FormData {
-  bankName?: string
-  bankAccountNumber?: string
-}
-
 export const AddBankAccountModal = observer(function AddBankAccountModal(
   props: AddBankAccountModalProps,
 ) {
   const { style, actionButtonTitleTx, cancelButtonTitleTx, visibility, setVisibility } = props
   const data: string[] = ["OCB", "VietcomBank"]
+  const rootStore = useStores()
 
-  const { handleSubmit, control, setValue } = useForm<FormData>({
+  const { handleSubmit, control, setValue, reset } = useForm<BankAccount>({
     defaultValues: {
-      bankName: "",
-      bankAccountNumber: "",
+      bank: "",
+      accountNo: "",
     },
   })
 
@@ -54,9 +54,10 @@ export const AddBankAccountModal = observer(function AddBankAccountModal(
     setVisibility(false)
   }
 
-  const handleSubmitOnPress = (data: FormData) => {
+  const handleSubmitOnPress = (data: BankAccount) => {
     setVisibility(false)
-    console.log(data)
+    rootStore.postBankAccount(data)
+    reset()
   }
 
   return (
@@ -73,7 +74,7 @@ export const AddBankAccountModal = observer(function AddBankAccountModal(
         <View style={$inputContainer}>
           <DropDownList
             control={control}
-            controlName="bankName"
+            controlName="bank"
             isOutline={true}
             labelTx="bankName"
             setValue={setValue}
@@ -81,7 +82,7 @@ export const AddBankAccountModal = observer(function AddBankAccountModal(
           />
           <Input
             control={control}
-            controlName="bankAccountNumber"
+            controlName="accountNo"
             labelTx="accountNumber"
             isOutLine={true}
           />
