@@ -102,6 +102,7 @@ const vn: Translations = {
   feedbackService: "Phản hồi dịch vụ",
   serviceName: "Tên dịch vụ",
   feedbackPlaceholder: "Nhập phản hồi của bạn...",
+  noAvailableService: "Không có dịch vụ nào khả dụng",
 }
 
 export default vn

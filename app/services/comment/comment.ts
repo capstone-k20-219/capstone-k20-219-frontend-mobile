@@ -14,30 +14,22 @@ export class CommentApi {
   }
 
   async postComment(payload: CommentInfo): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    try {
-      const response: ApiResponse<any> = await this.api.post(`/comments`, payload)
-      if (response.ok) {
-        return { kind: "ok", data: response.data }
-      }
-      throw new Error(JSON.stringify(getGeneralApiProblem(response)))
-    } catch (e) {
-      console.log(e)
-      return { kind: "unknown", temporary: true }
+    const response: ApiResponse<any> = await this.api.post(`/comments`, payload)
+    if (response.ok) {
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
     }
   }
 
   async getServiceComments(
     serviceId: string,
   ): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    try {
-      const response: ApiResponse<any> = await this.api.get(`/comments/services/${serviceId}`)
-      if (response.ok) {
-        return { kind: "ok", data: response.data }
-      }
-      throw new Error(JSON.stringify(getGeneralApiProblem(response)))
-    } catch (e) {
-      console.log(e)
-      return { kind: "unknown", temporary: true }
+    const response: ApiResponse<any> = await this.api.get(`/comments/services/${serviceId}`)
+    if (response.ok) {
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
     }
   }
 }

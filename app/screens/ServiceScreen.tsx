@@ -2,7 +2,7 @@ import React, { FC, useState } from "react"
 
 // modules
 import { observer } from "mobx-react-lite"
-import { ViewStyle, View, TextStyle, ScrollView, ImageStyle } from "react-native"
+import { ViewStyle, View, TextStyle, ScrollView, ImageStyle, Alert } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import { SafeAreaView } from "react-native-safe-area-context"
 
@@ -18,40 +18,40 @@ import {
 
 // hooks
 import { useForm } from "react-hook-form"
+import { useStores } from "app/models"
 
 // themes
 import { appStyle, colors, typography } from "app/theme"
 
+// interfaces
+import { ServiceBookingInfo } from "app/services/booking/booking.types"
+
 interface ServiceScreenProps extends AppStackScreenProps<"Service"> {}
 
-interface FormData {
-  vehicleId?: string
-}
-
-interface VehicleData {
-  name?: string
-  price?: string
-  serviceId?: string
-}
 export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceScreen() {
-  const data: string[] = ["HP234-34.456"]
-
-  const vehicleData: VehicleData[] = [
-    { name: "Vehicle washing", price: "$20.00", serviceId: "1" },
-    { name: "Vehicle washing", price: "$20.00", serviceId: "2" },
-    { name: "Vehicle washing", price: "$20.00" },
-    { name: "Vehicle washing", price: "$20.00" },
-  ]
-
+  const rootStore = useStores()
   const [count, setCount] = useState(0)
-  const { handleSubmit, control, setValue } = useForm<FormData>({
+  const { handleSubmit, control, setValue, getValues } = useForm<ServiceBookingInfo>({
     defaultValues: {
-      vehicleId: "",
+      serviceId: [],
+      ticketId: rootStore.parkingTicket[0].id,
+      vehicleId: 0,
     },
   })
 
-  const handleSubmitOnPress = (data: FormData) => {
-    console.log(data)
+  const handleSubmitOnPress = (data: ServiceBookingInfo) => {
+    console.log(JSON.stringify(rootStore.parkingTicket[0]))
+    if (data.serviceId.length === 0) {
+      Alert.alert("Error", "Please select at least one service")
+    } else {
+      data.serviceId.forEach((serviceId) => {
+        rootStore.postServiceBooking({
+          ticketId: data.ticketId,
+          serviceId,
+        })
+      })
+      Alert.alert("Success", "Your services has been booked successfully")
+    }
   }
 
   return (
@@ -64,7 +64,8 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
           isOutline={true}
           labelTx="chooseYourVehicle"
           labelStyle={$label}
-          data={data}
+          data={rootStore.vehicle}
+          type="vehicle"
         />
       </View>
       <View style={$headerContainer}>
@@ -77,22 +78,30 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
         )}
       </View>
       <View style={appStyle.maxHeightHalfScreen}>
-        <ScrollView contentContainerStyle={$scrollViewContainer}>
-          {vehicleData.map((value, index) => (
-            <ServiceBox
-              key={index}
-              serviceName={value.name}
-              price={value.price}
-              setCounter={setCount}
-              serviceId={value.serviceId}
-            />
-          ))}
-        </ScrollView>
+        {rootStore.service.length && rootStore.service[0].id ? (
+          <ScrollView contentContainerStyle={$scrollViewContainer}>
+            {rootStore.service.map((value, index) => (
+              <ServiceBox
+                key={index}
+                serviceName={value.name}
+                price={value.prices[0].unitPrice}
+                setCounter={setCount}
+                setValue={setValue}
+                getValues={getValues}
+                serviceId={value.id}
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <Text style={$noServiceText} tx="noAvailableService" />
+        )}
       </View>
-      <View style={$footerContainer}>
-        <VerticalSeparator color={colors.palette.neutral400} />
-        <PrimaryButton titleTx="book" onPress={handleSubmit(handleSubmitOnPress)} />
-      </View>
+      {rootStore.service.length && rootStore.service[0].id ? (
+        <View style={$footerContainer}>
+          <VerticalSeparator color={colors.palette.neutral400} />
+          <PrimaryButton titleTx="book" onPress={handleSubmit(handleSubmitOnPress)} />
+        </View>
+      ) : null}
     </SafeAreaView>
   )
 })
@@ -143,4 +152,12 @@ const $footerContainer: ViewStyle = {
   paddingHorizontal: 24,
   rowGap: 24,
   paddingTop: 24,
+}
+
+const $noServiceText: TextStyle = {
+  fontFamily: typography.fonts.rubik.regular,
+  fontSize: 18,
+  color: colors.black,
+  textAlign: "center",
+  paddingVertical: 24,
 }

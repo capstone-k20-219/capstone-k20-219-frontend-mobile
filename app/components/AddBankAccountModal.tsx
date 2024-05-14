@@ -79,6 +79,7 @@ export const AddBankAccountModal = observer(function AddBankAccountModal(
             labelTx="bankName"
             setValue={setValue}
             data={data}
+            type="bank"
           />
           <Input
             control={control}

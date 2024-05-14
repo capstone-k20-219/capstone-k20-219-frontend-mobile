@@ -15,13 +15,14 @@ import { api } from "app/services/api"
 import { LoginInfo } from "app/services/authentication/auth.types"
 import { RegisterInfo, UpdateInfo, BankAccount } from "app/services/user/user.types"
 import { VehicleInfo } from "app/services/vehicle/vehicle.types"
+import { CommentInfo } from "app/services/comment/comment.types"
 
 // async storage
 import { remove } from "app/utils/storage/storage"
 
 // i18n
 import { translate } from "app/i18n"
-
+import { navigationRef } from "app/navigators"
 const BankAccountInfo = types
   .model("BankAccountInfo")
   .props({
@@ -90,6 +91,36 @@ const SlotInfo = types
   })
   .actions(withSetPropAction)
 
+const ServicePrice = types
+  .model("ServicePrice")
+  .props({
+    unitPrice: types.maybeNull(types.number),
+    type: types.optional(VehicleTypeProps, {}),
+  })
+  .actions(withSetPropAction)
+
+const Service = types
+  .model("Service")
+  .props({
+    id: types.maybeNull(types.string),
+    name: types.maybeNull(types.string),
+    prices: types.array(types.optional(ServicePrice, {})),
+  })
+  .actions(withSetPropAction)
+
+const ParkingTicket = types
+  .model("ParkingTicket")
+  .props({
+    id: types.maybeNull(types.string),
+    userId: types.maybeNull(types.string),
+    slotId: types.maybeNull(types.string),
+    plateNo: types.maybeNull(types.string),
+    checkOutTime: types.maybeNull(types.Date),
+    parkingCost: types.maybeNull(types.number),
+    isPaid: types.maybeNull(types.boolean),
+  })
+  .actions(withSetPropAction)
+
 export const RootStoreModel = types
   .model("RootStore")
   .props({
@@ -98,6 +129,8 @@ export const RootStoreModel = types
     vehicle: types.array(types.optional(Vehicle, {})),
     vehicleType: types.array(types.optional(VehicleType, {})),
     slotInfo: types.array(types.optional(SlotInfo, {})),
+    service: types.array(types.optional(Service, {})),
+    parkingTicket: types.array(types.optional(ParkingTicket, {})),
   })
   .actions(withSetPropAction)
   .actions((store) => ({
@@ -216,6 +249,8 @@ export const RootStoreModel = types
         store.setProp("vehicle", [{}])
         store.setProp("vehicleType", [{}])
         store.setProp("slotInfo", [{}])
+        store.setProp("service", [{}])
+        store.setProp("parkingTicket", [{}])
         api.apisauce.setHeader("Authorization", "")
         yield remove("refresh_token")
       } else {
@@ -331,6 +366,62 @@ export const RootStoreModel = types
       }
       if (response.kind === "ok") {
         store.setProp("vehicleType", response.data)
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions((store) => ({
+    getServices: flow(function* (typeId: string) {
+      let response = yield api.service.getServices(typeId)
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.service.getServices(typeId)
+      }
+      if (response.kind === "ok") {
+        store.setProp("service", response.data)
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions(() => ({
+    postServiceBooking: flow(function* (payload: any) {
+      let response = yield api.booking.postServiceBooking(payload)
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.booking.postServiceBooking(payload)
+      }
+      if (response.kind === "ok") {
+        console.log(JSON.stringify(response))
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions(() => ({
+    postComment: flow(function* (payload: CommentInfo) {
+      let response = yield api.comment.postComment(payload)
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.comment.postComment(payload)
+      }
+      if (response.kind === "ok") {
+        navigationRef.navigate("Service")
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions((store) => ({
+    getParkingTicket: flow(function* () {
+      let response = yield api.parkingTicket.getMyParkingTicket()
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.parkingTicket.getMyParkingTicket()
+      }
+      if (response.kind === "ok") {
+        store.setProp("parkingTicket", response.data)
       } else {
         alert(JSON.stringify(response))
       }

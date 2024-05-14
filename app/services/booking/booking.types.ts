@@ -6,5 +6,6 @@ export interface SlotBookingInfo {
 
 export interface ServiceBookingInfo {
   ticketId: string
-  serviceId: string
+  serviceId: string[]
+  vehicleId?: number
 }

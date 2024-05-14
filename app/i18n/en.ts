@@ -100,6 +100,7 @@ const en = {
   feedbackService: "Service feedback",
   serviceName: "Service name",
   feedbackPlaceholder: "Please write your feedback here...",
+  noAvailableService: "No available service",
 }
 
 export default en

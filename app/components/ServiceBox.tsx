@@ -14,27 +14,48 @@ import { colors, typography } from "app/theme"
 // navigation ref
 import { navigationRef } from "app/navigators"
 
+// hooks
+import { UseFormSetValue, UseFormGetValues } from "react-hook-form"
+
 export interface ServiceBoxProps {
   style?: StyleProp<ViewStyle>
   setCounter?: React.Dispatch<React.SetStateAction<number>>
   serviceName?: string
   textStyle?: StyleProp<TextStyle>
-  price?: string
+  price?: number
   activeOpacity?: number
   serviceId?: string
+  setValue?: UseFormSetValue<any>
+  getValues?: UseFormGetValues<any>
 }
 
 export const ServiceBox = observer(function ServiceBox(props: ServiceBoxProps) {
-  const { style, setCounter, serviceName, textStyle, price, activeOpacity = 0.7, serviceId } = props
+  const {
+    style,
+    setCounter,
+    serviceName,
+    textStyle,
+    price,
+    activeOpacity = 0.7,
+    serviceId,
+    setValue,
+    getValues,
+  } = props
   const [isSelected, setIsSelected] = useState(false)
 
   const handleSelectedOnPress = () => {
+    const serviceIdList = getValues("serviceId")
     if (!isSelected) {
       setIsSelected(true)
       setCounter((prev) => prev + 1)
+      setValue("serviceId", [...serviceIdList, serviceId])
     } else {
       setIsSelected(false)
       setCounter((prev) => prev - 1)
+      setValue(
+        "serviceId",
+        serviceIdList.filter((id: string) => id !== serviceId),
+      )
     }
   }
 
@@ -54,7 +75,7 @@ export const ServiceBox = observer(function ServiceBox(props: ServiceBoxProps) {
           <Icon icon="feedback" size={22} />
         </TouchableOpacity>
       </View>
-      <Text style={[$priceText(isSelected), textStyle]} text={price} />
+      <Text style={[$priceText(isSelected), textStyle]} text={`$${price}`} />
     </TouchableOpacity>
   )
 })

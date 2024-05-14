@@ -20,12 +20,13 @@ import { VerticalSeparator } from "app/components/VerticalSeparator"
 
 // hooks
 import { UseFormSetValue, useController } from "react-hook-form"
+import { useStores } from "app/models"
 
 // themes
 import { appStyle, colors, typography } from "app/theme"
 
 // i18n
-import { TxKeyPath } from "app/i18n"
+import { TxKeyPath, translate } from "app/i18n"
 
 export interface DropDownListProps {
   data?: any[]
@@ -61,6 +62,9 @@ export const DropDownList = observer(function DropDownList(props: DropDownListPr
   } = props
   const [isOpen, setIsOpen] = useState(false)
   const [vehicleTypeName, setVehicleTypeName] = useState("")
+  const [plateNo, setPlateNo] = useState("")
+  const [vehicleType, setVehicleType] = useState("")
+  const rootStore = useStores()
 
   const controller =
     control && controlName
@@ -81,13 +85,19 @@ export const DropDownList = observer(function DropDownList(props: DropDownListPr
 
   const handleSelectDataOnPress = (data: any) => {
     setIsOpen(false)
-    setValue(controlName, data)
-  }
-
-  const handleSelectVehicleTypeOnPress = (id: string, name: string) => {
-    setIsOpen(false)
-    setValue(controlName, id)
-    setVehicleTypeName(name)
+    if (type === "bank") setValue(controlName, data)
+    else {
+      if (control) setValue(controlName, data.id)
+      if (type === "vehicle") {
+        setPlateNo(data.plateNo)
+        setVehicleType(translate(data.type.id.toLocaleLowerCase() as TxKeyPath))
+        if (rootStore.parkingTicket[0].plateNo === data.plateNo) rootStore.getServices(data.type.id)
+        else {
+          rootStore.setProp("service", [])
+        }
+      }
+      if (type === "vehicleType") setVehicleTypeName(data.name)
+    }
   }
 
   useEffect(() => {
@@ -95,6 +105,9 @@ export const DropDownList = observer(function DropDownList(props: DropDownListPr
       setValue(controlName, data)
       if (type === "vehicleType") {
         setVehicleTypeName(data[0].name)
+      }
+      if (type === "vehicle") {
+        setPlateNo(data[0].plateNo)
       }
     }
   }, [])
@@ -114,6 +127,8 @@ export const DropDownList = observer(function DropDownList(props: DropDownListPr
               ? placeholder
               : type === "vehicleType"
               ? vehicleTypeName
+              : type === "vehicle" && plateNo
+              ? `${plateNo} - ${vehicleType}`
               : controller.field.value
           }
         />
@@ -132,17 +147,33 @@ export const DropDownList = observer(function DropDownList(props: DropDownListPr
               <TouchableOpacity
                 key={index}
                 activeOpacity={activeOpacity}
-                onPress={
-                  type === "vehicleType"
-                    ? () => handleSelectVehicleTypeOnPress(value.id, value.name)
-                    : () => handleSelectDataOnPress(value.id)
-                }
+                onPress={() => handleSelectDataOnPress(value)}
               >
                 {index === data.length - 1 ? (
-                  <Text text={value.name ? value.name : value.plateNo} />
+                  <Text
+                    text={
+                      value.name
+                        ? value.name
+                        : value.plateNo
+                        ? `${value.plateNo} - ${translate(
+                            value.type.id.toLocaleLowerCase() as TxKeyPath,
+                          )}`
+                        : value
+                    }
+                  />
                 ) : (
                   <View>
-                    <Text text={value.name ? value.name : value.plateNo} />
+                    <Text
+                      text={
+                        value.name
+                          ? value.name
+                          : value.plateNo
+                          ? `${value.plateNo} - ${translate(
+                              value.type.id.toLocaleLowerCase() as TxKeyPath,
+                            )}`
+                          : value
+                      }
+                    />
                     <VerticalSeparator style={$separator} />
                   </View>
                 )}

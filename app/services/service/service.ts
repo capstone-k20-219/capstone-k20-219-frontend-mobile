@@ -10,16 +10,12 @@ export class ServiceApi {
     this.api = api
   }
 
-  async getServices(): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    try {
-      const response: ApiResponse<any> = await this.api.get(`/services/all`)
-      if (response.ok) {
-        return { kind: "ok", data: response.data }
-      }
-      throw new Error(JSON.stringify(getGeneralApiProblem(response)))
-    } catch (e) {
-      console.log(e)
-      return { kind: "unknown", temporary: true }
+  async getServices(typeId: string): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.api.get(`/services/filter?typeId=${typeId}`)
+    if (response.ok) {
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
     }
   }
 }
