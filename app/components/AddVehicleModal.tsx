@@ -17,12 +17,16 @@ import { appStyle, colors, typography } from "app/theme"
 
 // hooks
 import { useForm } from "react-hook-form"
+import { useStores } from "app/models"
 
 // i18n
-import { TxKeyPath, translate } from "app/i18n"
+import { TxKeyPath } from "app/i18n"
 
 // constants
 import { sizes } from "app/constants"
+
+// interfaces
+import { VehicleInfo } from "app/services/vehicle/vehicle.types"
 
 export interface AddVehicleModalProps {
   style?: StyleProp<ViewStyle>
@@ -32,19 +36,14 @@ export interface AddVehicleModalProps {
   setVisibility?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-interface FormData {
-  vehicleNumber?: string
-  vehicleType?: string
-}
-
 export const AddVehicleModal = observer(function AddVehicleModal(props: AddVehicleModalProps) {
   const { style, actionButtonTitleTx, cancelButtonTitleTx, visibility, setVisibility } = props
-  const data: string[] = [translate("car"), translate("motorbike"), translate("truck")]
+  const rootStore = useStores()
 
-  const { handleSubmit, control, setValue } = useForm<FormData>({
+  const { handleSubmit, control, setValue, reset } = useForm<VehicleInfo>({
     defaultValues: {
-      vehicleNumber: "",
-      vehicleType: "",
+      typeId: "",
+      plateNo: "",
     },
   })
 
@@ -52,9 +51,10 @@ export const AddVehicleModal = observer(function AddVehicleModal(props: AddVehic
     setVisibility(false)
   }
 
-  const handleSubmitOnPress = (data: FormData) => {
+  const handleSubmitOnPress = (data: VehicleInfo) => {
     setVisibility(false)
-    console.log(data)
+    rootStore.postVehicle(data)
+    reset()
   }
 
   return (
@@ -69,19 +69,15 @@ export const AddVehicleModal = observer(function AddVehicleModal(props: AddVehic
         <Text style={$title} tx="addNewVehicle" />
         <VerticalSeparator />
         <View style={$inputContainer}>
-          <Input
-            control={control}
-            controlName="vehicleNumber"
-            labelTx="vehicleNumber"
-            isOutLine={true}
-          />
+          <Input control={control} controlName="plateNo" labelTx="vehicleNumber" isOutLine={true} />
           <DropDownList
             control={control}
-            controlName="vehicleType"
+            controlName="typeId"
             isOutline={true}
             labelTx="vehicleType"
             setValue={setValue}
-            data={data}
+            data={rootStore.vehicleType}
+            type="vehicleType"
           />
         </View>
         <View style={$buttonContainer}>

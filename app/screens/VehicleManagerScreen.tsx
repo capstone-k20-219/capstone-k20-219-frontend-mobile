@@ -22,22 +22,15 @@ import { appStyle, colors, typography } from "app/theme"
 // i18n
 import { TxKeyPath } from "app/i18n"
 
-interface VehicleManagerScreenProps extends AppStackScreenProps<"VehicleManager"> {}
+// hooks
+import { useStores } from "app/models"
 
-interface VehicleData {
-  icon?: IconTypes
-  plateNumber?: string
-  type?: TxKeyPath
-}
+interface VehicleManagerScreenProps extends AppStackScreenProps<"VehicleManager"> {}
 
 export const VehicleManagerScreen: FC<VehicleManagerScreenProps> = observer(
   function VehicleManagerScreen() {
     const [isOpen, setIsOpen] = useState(false)
-    const data: VehicleData[] = [
-      { icon: "car", plateNumber: "HP234-34.653", type: "car" },
-      { icon: "motorbike", plateNumber: "HP234-34.653", type: "motorbike" },
-      { icon: "truck", plateNumber: "HP234-34.653", type: "truck" },
-    ]
+    const rootStore = useStores()
 
     const handleOpenModalOnPress = () => {
       setIsOpen(true)
@@ -51,12 +44,14 @@ export const VehicleManagerScreen: FC<VehicleManagerScreenProps> = observer(
           <AddButton onPress={handleOpenModalOnPress} />
         </View>
         <ScrollView contentContainerStyle={$container}>
-          {data.map((value, index) => (
+          {rootStore.vehicle.map((value, index) => (
             <InfoSummaryBox
               key={index}
-              icon={value.icon}
-              title={value.plateNumber}
-              labelTx={value.type}
+              icon={value.type.id.toLocaleLowerCase() as IconTypes}
+              title={value.plateNo}
+              labelTx={value.type.id.toLocaleLowerCase() as TxKeyPath}
+              type="vehicle"
+              id={value.id}
             />
           ))}
         </ScrollView>

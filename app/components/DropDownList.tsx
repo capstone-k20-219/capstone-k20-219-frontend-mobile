@@ -40,6 +40,7 @@ export interface DropDownListProps {
   placeholder?: string
   placeholderStyle?: StyleProp<TextStyle>
   setValue?: UseFormSetValue<any>
+  type?: string
 }
 
 export const DropDownList = observer(function DropDownList(props: DropDownListProps) {
@@ -56,8 +57,10 @@ export const DropDownList = observer(function DropDownList(props: DropDownListPr
     activeOpacity = 0.7,
     isOutline = false,
     textColor = colors.text,
+    type,
   } = props
   const [isOpen, setIsOpen] = useState(false)
+  const [vehicleTypeName, setVehicleTypeName] = useState("")
 
   const controller =
     control && controlName
@@ -81,8 +84,19 @@ export const DropDownList = observer(function DropDownList(props: DropDownListPr
     setValue(controlName, data)
   }
 
+  const handleSelectVehicleTypeOnPress = (id: string, name: string) => {
+    setIsOpen(false)
+    setValue(controlName, id)
+    setVehicleTypeName(name)
+  }
+
   useEffect(() => {
-    if (data.length === 1) setValue(controlName, data)
+    if (data.length === 1) {
+      setValue(controlName, data)
+      if (type === "vehicleType") {
+        setVehicleTypeName(data[0].name)
+      }
+    }
   }, [])
 
   return (
@@ -95,7 +109,13 @@ export const DropDownList = observer(function DropDownList(props: DropDownListPr
       >
         <Text
           style={[$text(textColor), placeholderStyle]}
-          text={controller.field.value === "" ? placeholder : controller.field.value}
+          text={
+            controller.field.value === ""
+              ? placeholder
+              : type === "vehicleType"
+              ? vehicleTypeName
+              : controller.field.value
+          }
         />
         <Icon style={$icon} icon="arrowDown" />
       </TouchableOpacity>
@@ -112,13 +132,17 @@ export const DropDownList = observer(function DropDownList(props: DropDownListPr
               <TouchableOpacity
                 key={index}
                 activeOpacity={activeOpacity}
-                onPress={() => handleSelectDataOnPress(value)}
+                onPress={
+                  type === "vehicleType"
+                    ? () => handleSelectVehicleTypeOnPress(value.id, value.name)
+                    : () => handleSelectDataOnPress(value.id)
+                }
               >
                 {index === data.length - 1 ? (
-                  <Text text={value} />
+                  <Text text={value.name ? value.name : value.plateNo} />
                 ) : (
                   <View>
-                    <Text text={value} />
+                    <Text text={value.name ? value.name : value.plateNo} />
                     <VerticalSeparator style={$separator} />
                   </View>
                 )}

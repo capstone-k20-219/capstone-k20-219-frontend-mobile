@@ -14,41 +14,44 @@ export class VehicleApi {
   }
 
   async postVehicle(payload: VehicleInfo): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    try {
-      const response: ApiResponse<any> = await this.api.post(`/vehicles`, payload)
-      if (response.ok) {
-        return { kind: "ok", data: response.data }
-      }
-      throw new Error(JSON.stringify(getGeneralApiProblem(response)))
-    } catch (e) {
-      console.log(e)
-      return { kind: "unknown", temporary: true }
+    const response: ApiResponse<any> = await this.api.post(`/vehicles`, payload)
+    if (response.ok) {
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
+    }
+  }
+
+  async postVehiclePublic(
+    payload: VehicleInfo,
+    userId: string,
+  ): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.api.post(
+      `/vehicles/public/user/${userId}`,
+      payload,
+    )
+    if (response.ok) {
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
     }
   }
 
   async getMyVehicles(): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    try {
-      const response: ApiResponse<any> = await this.api.get(`/vehicles/my`)
-      if (response.ok) {
-        return { kind: "ok", data: response.data }
-      }
-      throw new Error(JSON.stringify(getGeneralApiProblem(response)))
-    } catch (e) {
-      console.log(e)
-      return { kind: "unknown", temporary: true }
+    const response: ApiResponse<any> = await this.api.get(`/vehicles/my`)
+    if (response.ok) {
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
     }
   }
 
-  async deleteVehicle(vehicleId: string): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    try {
-      const response: ApiResponse<any> = await this.api.delete(`/vehicles/${vehicleId}`)
-      if (response.ok) {
-        return { kind: "ok", data: response.data }
-      }
-      throw new Error(JSON.stringify(getGeneralApiProblem(response)))
-    } catch (e) {
-      console.log(e)
-      return { kind: "unknown", temporary: true }
+  async deleteVehicle(vehicleId: number): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.api.delete(`/vehicles/${vehicleId}`)
+    if (response.ok) {
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
     }
   }
 }

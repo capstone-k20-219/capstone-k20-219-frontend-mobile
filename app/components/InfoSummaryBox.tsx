@@ -33,6 +33,8 @@ export interface InfoSummaryBoxProps {
   labelStyle?: StyleProp<TextStyle>
   activeOpacity?: number
   accountNo?: string
+  type?: "vehicle" | "bank"
+  id?: number
 }
 
 export const InfoSummaryBox = observer(function InfoSummaryBox(props: InfoSummaryBoxProps) {
@@ -49,11 +51,17 @@ export const InfoSummaryBox = observer(function InfoSummaryBox(props: InfoSummar
     labelStyle,
     activeOpacity = 0.7,
     accountNo,
+    type,
+    id,
   } = props
   const rootStore = useStores()
 
   const handleDeleteOnPress = () => {
-    rootStore.deleteBankAccount({ bank: title, accountNo })
+    if (type === "bank") {
+      rootStore.deleteBankAccount({ bank: title, accountNo })
+    } else {
+      rootStore.deleteVehicle(id)
+    }
   }
 
   return (
@@ -98,7 +106,7 @@ const $label: TextStyle = {
 
 const $leftIcon: ImageStyle = {
   width: 80,
-  height: 39,
+  height: 55,
   tintColor: colors.palette.primary100,
 }
 

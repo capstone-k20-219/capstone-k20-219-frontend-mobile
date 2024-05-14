@@ -64,7 +64,7 @@ export const RegisterPersonalInfoScreen: FC<RegisterPersonalInfoScreenProps> = o
         rootStore.userInfo.setProp("email", data.email)
         rootStore.userInfo.setProp("password", data.password)
         rootStore.userInfo.setProp("role", ["user"])
-        props.navigation.navigate("RegisterVehicle")
+        props.navigation.navigate("RegisterBankAccount")
       }
     }
 
@@ -77,7 +77,7 @@ export const RegisterPersonalInfoScreen: FC<RegisterPersonalInfoScreenProps> = o
         <KeyboardAvoidingView style={appStyle.flex1} behavior="padding">
           <View style={$container}>
             <BackButton />
-            <RegisterProgessBar lineWidth={sizes.screenWidth * 0.205} level={0} />
+            <RegisterProgessBar lineWidth={sizes.screenWidth * 0.205} level={1} />
           </View>
           <PrimaryHeader style={$title} tx="personalInfo" />
           <ScrollView contentContainerStyle={$scrollViewContainer}>

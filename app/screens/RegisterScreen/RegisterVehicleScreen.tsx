@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FC, useEffect } from "react"
 
 // modules
 import { observer } from "mobx-react-lite"
@@ -18,6 +18,7 @@ import {
 
 // hooks
 import { useForm } from "react-hook-form"
+import { useStores } from "app/models"
 
 // themes
 import { appStyle } from "app/theme"
@@ -28,33 +29,40 @@ import { sizes } from "app/constants"
 // i18n
 import { translate } from "app/i18n"
 
-interface RegisterVehicleScreenProps extends AppStackScreenProps<"RegisterVehicle"> {}
+// interfaces
+import { VehicleInfo } from "app/services/vehicle/vehicle.types"
 
-interface FormData {
-  plateNumber?: string
-  vehicleType?: string
-}
+interface RegisterVehicleScreenProps extends AppStackScreenProps<"RegisterVehicle"> {}
 
 export const RegisterVehicleScreen: FC<RegisterVehicleScreenProps> = observer(
   function RegisterVehicleScreen(props) {
-    const data: string[] = [translate("car"), translate("motorbike"), translate("truck")]
-    const { handleSubmit, control, setValue } = useForm<FormData>({
+    const rootStore = useStores()
+    const vehicleType = [
+      { id: "BCL", name: "Bicycle" },
+      { id: "BUS", name: "Bus" },
+      { id: "CAR", name: "Car" },
+      { id: "MTB", name: "Motobike" },
+      { id: "TRK", name: "Truck" },
+    ]
+    const { handleSubmit, control, setValue } = useForm<VehicleInfo>({
       defaultValues: {
-        plateNumber: "",
-        vehicleType: "",
+        plateNo: "",
+        typeId: "",
       },
     })
 
-    const handleSubmitOnPress = (data: FormData) => {
-      console.log(data)
-      // rootStore.userInfo.setProp("vehicle", [{plateNo: data.plateNumber, typeId: data.vehicleType}])
-      // console.log(JSON.stringify(rootStore.userInfo.vehicle))
+    const handleSubmitOnPress = (data: VehicleInfo) => {
+      rootStore.setProp("vehicle", [{ plateNo: data.plateNo, type: { id: data.typeId } }])
       props.navigation.navigate("RegisterBankAccount")
     }
 
     const handleSkipOnPress = () => {
       props.navigation.navigate("RegisterBankAccount")
     }
+
+    useEffect(() => {
+      console.log(JSON.stringify(rootStore.vehicleType))
+    }, [])
 
     return (
       <SafeAreaView style={appStyle.rootContainer}>
@@ -65,13 +73,14 @@ export const RegisterVehicleScreen: FC<RegisterVehicleScreenProps> = observer(
           </View>
           <PrimaryHeader style={$title} tx="vehicleRegister" />
           <ScrollView contentContainerStyle={$scrollViewContainer}>
-            <Input control={control} controlName="plateNumber" placeHolderTx="plateNumber" />
+            <Input control={control} controlName="plateNo" placeHolderTx="plateNumber" />
             <DropDownList
               control={control}
-              controlName="vehicleType"
+              controlName="typeId"
               placeholder={translate("vehicleType")}
               setValue={setValue}
-              data={data}
+              data={vehicleType}
+              type="vehicleType"
             />
             <PrimaryButton
               style={appStyle.marginTop16}

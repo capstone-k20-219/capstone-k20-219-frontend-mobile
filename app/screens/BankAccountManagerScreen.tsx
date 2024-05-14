@@ -50,6 +50,7 @@ export const BankAccountManagerScreen: FC<BankAccountManagerScreenProps> = obser
               title={value.bank}
               label={encryptAccountNumber(value.accountNo)}
               accountNo={value.accountNo}
+              type="bank"
             />
           ))}
         </ScrollView>

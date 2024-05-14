@@ -19,26 +19,24 @@ import { appStyle } from "app/theme"
 // constants
 import { sizes } from "app/constants"
 
-interface RegisterBankAccountScreenProps extends AppStackScreenProps<"RegisterBankAccount"> {}
+// interfaces
+import { BankAccount } from "app/services/user/user.types"
 
-interface FormData {
-  bankName?: string
-  cardNumber?: string
-}
+interface RegisterBankAccountScreenProps extends AppStackScreenProps<"RegisterBankAccount"> {}
 
 export const RegisterBankAccountScreen: FC<RegisterBankAccountScreenProps> = observer(
   function RegisterBankAccountScreen(props) {
     const inputRef = useRef(null)
     const rootStore = useStores()
-    const { handleSubmit, control } = useForm<FormData>({
+    const { handleSubmit, control } = useForm<BankAccount>({
       defaultValues: {
-        bankName: "",
-        cardNumber: "",
+        bank: "",
+        accountNo: "",
       },
     })
 
-    const handleSubmitOnPress = (data: FormData) => {
-      console.log(data)
+    const handleSubmitOnPress = (data: BankAccount) => {
+      rootStore.userInfo.setProp("bankAccount", [data])
       rootStore.postRegister()
       props.navigation.navigate("RegisterSuccess")
     }
@@ -63,7 +61,7 @@ export const RegisterBankAccountScreen: FC<RegisterBankAccountScreenProps> = obs
           <ScrollView contentContainerStyle={$scrollViewContainer}>
             <Input
               control={control}
-              controlName="bankName"
+              controlName="bank"
               placeHolderTx="bankName"
               onSubmitEditing={handleFocusNextInputOnPress}
               blurOnSubmit={false}
@@ -72,7 +70,7 @@ export const RegisterBankAccountScreen: FC<RegisterBankAccountScreenProps> = obs
             <Input
               ref={inputRef}
               control={control}
-              controlName="cardNumber"
+              controlName="accountNo"
               placeHolderTx="cardNumber"
               returnKeyType="done"
             />

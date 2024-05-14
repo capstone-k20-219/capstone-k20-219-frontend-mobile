@@ -69,6 +69,9 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(p
   useEffect(() => {
     if (rootStore.isLoggedIn) {
       rootStore.getUserInfo()
+      rootStore.getSlotInfo()
+      rootStore.getMyVehicles()
+      rootStore.getVehicleType()
       props.navigation.navigate("Home")
       reset()
     }

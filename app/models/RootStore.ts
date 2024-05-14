@@ -14,14 +14,13 @@ import { api } from "app/services/api"
 // interfaces
 import { LoginInfo } from "app/services/authentication/auth.types"
 import { RegisterInfo, UpdateInfo, BankAccount } from "app/services/user/user.types"
+import { VehicleInfo } from "app/services/vehicle/vehicle.types"
 
 // async storage
 import { remove } from "app/utils/storage/storage"
-import { translate } from "app/i18n"
 
-/**
- * A RootStore model.
- */
+// i18n
+import { translate } from "app/i18n"
 
 const BankAccountInfo = types
   .model("BankAccountInfo")
@@ -31,11 +30,32 @@ const BankAccountInfo = types
   })
   .actions(withSetPropAction)
 
-const VehicleInfo = types
-  .model("VehicleInfo")
+const VehicleTypeProps = types
+  .model("VehicleTypeProps")
   .props({
+    id: types.maybeNull(types.string),
+    name: types.maybeNull(types.string),
+  })
+  .actions(withSetPropAction)
+
+const Vehicle = types
+  .model("Vehicle")
+  .props({
+    id: types.maybeNull(types.number),
     plateNo: types.maybeNull(types.string),
-    typeId: types.maybeNull(types.string),
+    description: types.maybeNull(types.string),
+    userId: types.maybeNull(types.string),
+    type: types.optional(VehicleTypeProps, {}),
+  })
+  .actions(withSetPropAction)
+
+const VehicleType = types
+  .model("VehicleType")
+  .props({
+    id: types.maybeNull(types.string),
+    name: types.maybeNull(types.string),
+    parkingFee: types.maybeNull(types.number),
+    slotBookingFee: types.maybeNull(types.number),
   })
   .actions(withSetPropAction)
 
@@ -75,7 +95,8 @@ export const RootStoreModel = types
   .props({
     userId: types.maybeNull(types.string),
     userInfo: types.optional(UserInfo, {}),
-    vehicle: types.array(types.optional(VehicleInfo, {})),
+    vehicle: types.array(types.optional(Vehicle, {})),
+    vehicleType: types.array(types.optional(VehicleType, {})),
     slotInfo: types.array(types.optional(SlotInfo, {})),
   })
   .actions(withSetPropAction)
@@ -95,11 +116,64 @@ export const RootStoreModel = types
     }),
   }))
   .actions((store) => ({
+    postVehicle: flow(function* (payload: VehicleInfo) {
+      let response = yield api.vehicle.postVehicle(payload)
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.vehicle.postVehicle(payload)
+      }
+      if (response.kind === "ok") {
+        store.setProp("vehicle", [
+          ...store.vehicle,
+          {
+            plateNo: response.data.plateNo,
+            userId: response.data.userId,
+            type: { id: response.data.typeId },
+            id: response.data.id,
+            description: "",
+          },
+        ])
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions((store) => ({
+    postVehiclePublic: flow(function* (payload: VehicleInfo, userId: string) {
+      let response = yield api.vehicle.postVehiclePublic(payload, userId)
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.vehicle.postVehiclePublic(payload, userId)
+      }
+      if (response.kind === "ok") {
+        store.setProp("vehicle", [
+          ...store.vehicle,
+          {
+            plateNo: response.data.plateNo,
+            userId: response.data.userId,
+            type: { id: response.data.typeId },
+            id: response.data.id,
+            description: "",
+          },
+        ])
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions((store) => ({
     postRegister: flow(function* () {
       const imageURL = yield api.firebase.getDefaultAvatar()
       store.userInfo.setProp("image", imageURL)
       const response = yield api.user.postRegister(store.userInfo as RegisterInfo)
       if (response.kind === "ok") {
+        if (store.vehicle.length > 0) {
+          store.postVehiclePublic(
+            { plateNo: store.vehicle[0].plateNo, typeId: store.vehicle[0].type.id },
+            response.data.id,
+          )
+        }
+      } else {
         alert(JSON.stringify(response))
       }
     }),
@@ -138,6 +212,10 @@ export const RootStoreModel = types
       }
       if (response.kind === "ok") {
         store.setProp("userId", null)
+        store.setProp("userInfo", {})
+        store.setProp("vehicle", [{}])
+        store.setProp("vehicleType", [{}])
+        store.setProp("slotInfo", [{}])
         api.apisauce.setHeader("Authorization", "")
         yield remove("refresh_token")
       } else {
@@ -210,6 +288,49 @@ export const RootStoreModel = types
       }
       if (response.kind === "ok") {
         store.userInfo.setProp("bankAccount", data)
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions((store) => ({
+    getMyVehicles: flow(function* () {
+      let response = yield api.vehicle.getMyVehicles()
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.vehicle.getMyVehicles()
+      }
+      if (response.kind === "ok") {
+        store.setProp("vehicle", response.data)
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions((store) => ({
+    deleteVehicle: flow(function* (vehicleId: number) {
+      let response = yield api.vehicle.deleteVehicle(vehicleId)
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.vehicle.deleteVehicle(vehicleId)
+      }
+      if (response.kind === "ok") {
+        const data = store.vehicle.filter((item) => item.id !== vehicleId)
+        store.setProp("vehicle", data)
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions((store) => ({
+    getVehicleType: flow(function* () {
+      let response = yield api.vehicleType.getVehicleType()
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.vehicleType.getVehicleType()
+      }
+      if (response.kind === "ok") {
+        store.setProp("vehicleType", response.data)
       } else {
         alert(JSON.stringify(response))
       }

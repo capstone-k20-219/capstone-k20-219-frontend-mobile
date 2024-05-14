@@ -70,7 +70,7 @@ export const ProfileScreen: FC<ProfileScreenProps> = observer(function ProfileSc
         <View style={$headerContainer}>
           <BackButton />
           <ImagePicker defaultImage={rootStore.userInfo.image} />
-          <Text style={$headerText} text="PHAM HUU DUC" />
+          <Text style={$headerText} text={rootStore.userInfo.name} />
         </View>
         <ScrollView contentContainerStyle={$container}>
           <Picker

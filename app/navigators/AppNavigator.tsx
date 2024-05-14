@@ -80,6 +80,8 @@ const AppStack = observer(function AppStack() {
         if (response.kind === "ok") {
           rootStore.getUserInfo()
           rootStore.getSlotInfo()
+          rootStore.getMyVehicles()
+          rootStore.getVehicleType()
         }
       }
     }
