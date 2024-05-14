@@ -34,7 +34,7 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
   const { handleSubmit, control, setValue, getValues } = useForm<ServiceBookingInfo>({
     defaultValues: {
       serviceId: [],
-      ticketId: rootStore.parkingTicket[0].id,
+      ticketId: "",
       vehicleId: 0,
     },
   })
