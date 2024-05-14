@@ -34,7 +34,7 @@ export const iconRegistry = {
   darkMode: require("../../assets/icons/darkMode.png"),
   notification: require("../../assets/icons/notification.png"),
   bug: require("../../assets/icons/bug.png"),
-  feedback: require("../../assets/icons/feedback.jpeg"),
+  feedback: require("../../assets/icons/feedback.png"),
   star_gray: require("../../assets/icons/star_gray.png"),
   star_yellow: require("../../assets/icons/star_yellow.png"),
   bcl: require("../../assets/icons/bike.png"),

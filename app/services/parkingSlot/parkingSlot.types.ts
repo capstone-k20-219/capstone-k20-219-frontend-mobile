@@ -5,7 +5,6 @@ export interface SlotInfo {
   y_start: number
   y_end: number
   typeId: string
-  type: {
-    name: string
-  }
+  type: string
+  isBusy: boolean
 }

@@ -36,12 +36,15 @@ export const Slot = observer(function Slot(props: SlotProps) {
 
   return (
     <TouchableOpacity
-      style={[$container(slotInfo, slotOffset), style]}
+      style={[$container(slotInfo, slotOffset, rootStore.myParkingSlotId, interactiveMode), style]}
       activeOpacity={interactiveMode ? activeOpacity : 1}
-      disabled={!interactiveMode}
+      disabled={!interactiveMode || slotInfo.isBusy}
       onPress={handleOpenModalOnPress}
     >
-      <Text style={$text} text={slotInfo.id} />
+      <Text
+        style={$text(slotInfo, rootStore.myParkingSlotId, interactiveMode)}
+        text={slotInfo.id}
+      />
       <BookingSlotModal
         visibility={isModalOpen}
         setVisibility={setIsModalOpen}
@@ -51,21 +54,36 @@ export const Slot = observer(function Slot(props: SlotProps) {
   )
 })
 
-const $container = (slot: SlotInfo, slotOffset: number): ViewStyle => ({
+const $container = (
+  slot: SlotInfo,
+  slotOffset: number,
+  slotIdList: string[],
+  interactiveMode: boolean,
+): ViewStyle => ({
   position: "absolute",
   top: slot.y_start,
   left: (slot.x_start - slotOffset) * 1.5,
   width: (slot.x_end - slot.x_start) * 1.5,
   height: slot.y_end - slot.y_start,
   borderColor: colors.black,
-  backgroundColor: colors.white,
+  backgroundColor:
+    slot.isBusy && interactiveMode
+      ? colors.slotBorder
+      : slot.isBusy && !interactiveMode && slotIdList.includes(slot.id)
+      ? colors.palette.primary100
+      : colors.white,
   borderWidth: 0.5,
   justifyContent: "center",
 })
 
-const $text: TextStyle = {
+const $text = (slot: SlotInfo, slotIdList: string[], interactiveMode: boolean): TextStyle => ({
   fontFamily: typography.fonts.rubik.regular,
-  color: colors.black,
+  color:
+    slot.isBusy && interactiveMode
+      ? colors.black
+      : slot.isBusy && !interactiveMode && slotIdList.includes(slot.id)
+      ? colors.white
+      : colors.black,
   fontSize: 12,
   textAlign: "center",
-}
+})

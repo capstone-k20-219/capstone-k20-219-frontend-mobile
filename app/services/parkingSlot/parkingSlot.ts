@@ -11,7 +11,7 @@ export class ParkingSlotApi {
   }
 
   async getParkingSlots(): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
-    const response: ApiResponse<any> = await this.api.get(`/parking-slots/filter`)
+    const response: ApiResponse<any> = await this.api.get(`/parking-slots/allWithAvailStatus`)
     if (response.ok) {
       return { kind: "ok", data: response.data }
     } else {

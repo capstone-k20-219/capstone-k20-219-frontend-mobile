@@ -91,7 +91,7 @@ export const TabNavigator = () => {
 }
 
 const $tabBar: ViewStyle = {
-  backgroundColor: colors.palette.primary100,
+  backgroundColor: colors.palette.primary200,
 }
 
 const $tabBarItem: ViewStyle = {
@@ -108,7 +108,7 @@ const $tabBarLabel: TextStyle = {
 
 const $checkoutTab: ViewStyle = {
   borderRadius: 44,
-  backgroundColor: colors.palette.primary100,
+  backgroundColor: colors.palette.primary200,
   bottom: 33,
   paddingTop: 20,
   paddingHorizontal: 3,

@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 
 // modules
-import { StyleProp, TextStyle, ViewStyle, TouchableOpacity, View } from "react-native"
+import { StyleProp, TextStyle, ViewStyle, TouchableOpacity, View, ImageStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 
 // components
@@ -72,7 +72,7 @@ export const ServiceBox = observer(function ServiceBox(props: ServiceBoxProps) {
       <View style={$subContainer}>
         <Text style={[$serviceText(isSelected), textStyle]} text={serviceName} />
         <TouchableOpacity activeOpacity={activeOpacity} onPress={handleFeedbackOnPress}>
-          <Icon icon="feedback" size={20} />
+          <Icon icon="feedback" size={20} style={$icon(isSelected)} />
         </TouchableOpacity>
       </View>
       <Text style={[$priceText(isSelected), textStyle]} text={`$${price}`} />
@@ -107,4 +107,8 @@ const $priceText = (isSelected: boolean): TextStyle => ({
   fontSize: 16,
   color: isSelected ? colors.white : colors.black,
   textAlign: "right",
+})
+
+const $icon = (isSelected: boolean): ImageStyle => ({
+  tintColor: isSelected ? colors.white : colors.black,
 })

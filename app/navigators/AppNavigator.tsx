@@ -102,7 +102,7 @@ const AppStack = observer(function AppStack() {
       <Stack.Screen
         name="Home"
         component={TabNavigator}
-        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary100 }}
+        options={{ animation: "slide_from_right", navigationBarColor: colors.palette.primary200 }}
       />
 
       <Stack.Screen

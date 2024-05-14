@@ -74,9 +74,9 @@ export const UserInfo = types
   })
   .actions(withSetPropAction)
 
-const SlotType = types.model("SlotType").props({
-  name: types.maybeNull(types.string),
-})
+// const SlotType = types.model("SlotType").props({
+//   name: types.maybeNull(types.string),
+// })
 
 const SlotInfo = types
   .model("SlotInfo")
@@ -87,7 +87,8 @@ const SlotInfo = types
     y_start: types.maybeNull(types.number),
     y_end: types.maybeNull(types.number),
     typeId: types.maybeNull(types.string),
-    type: types.optional(SlotType, {}),
+    type: types.maybeNull(types.string),
+    isBusy: types.maybeNull(types.boolean),
   })
   .actions(withSetPropAction)
 
@@ -200,12 +201,7 @@ export const RootStoreModel = types
       store.userInfo.setProp("image", imageURL)
       const response = yield api.user.postRegister(store.userInfo as RegisterInfo)
       if (response.kind === "ok") {
-        if (store.vehicle.length > 0) {
-          store.postVehiclePublic(
-            { plateNo: store.vehicle[0].plateNo, typeId: store.vehicle[0].type.id },
-            response.data.id,
-          )
-        }
+        console.log(JSON.stringify(response))
       } else {
         alert(JSON.stringify(response))
       }
@@ -437,6 +433,27 @@ export const RootStoreModel = types
         if (slot.x_start < minX) minX = slot.x_start
       })
       return minX - 24
+    },
+    get myParkingSlotId() {
+      if (store.parkingTicket.length && store.parkingTicket[0].id !== null) {
+        return store.parkingTicket.map(({ slotId }) => slotId)
+      } else {
+        return []
+      }
+    },
+    get firstParkingSlotCoordinate() {
+      if (store.parkingTicket.length && store.parkingTicket[0].id !== null) {
+        return store.slotInfo.find((slot) => slot.id === store.parkingTicket[0].slotId)
+      } else {
+        return null
+      }
+    },
+    get myParkingVehicle() {
+      if (store.parkingTicket.length && store.parkingTicket[0].id !== null) {
+        return store.parkingTicket.map(({ plateNo, id }) => ({ plateNo, id }))
+      } else {
+        return []
+      }
     },
   }))
 

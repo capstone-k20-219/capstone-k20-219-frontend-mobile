@@ -1,20 +1,21 @@
-import React, { FC } from "react"
+import React, { FC, useEffect, useState } from "react"
 
 // modules
 import { observer } from "mobx-react-lite"
-import { ViewStyle, Image, View, TextStyle, ImageStyle } from "react-native"
+import { ViewStyle, View, TextStyle, ImageStyle, TouchableOpacity, ScrollView } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import { SafeAreaView } from "react-native-safe-area-context"
 import QRCode from "react-native-qrcode-svg"
+import Modal from "react-native-modal"
 
 // components
-import { Text, Icon } from "app/components"
+import { Text, Icon, VerticalSeparator } from "app/components"
 
 // hooks
 import { useStores } from "app/models"
 
 // themes
-import { images, appStyle, typography, colors } from "app/theme"
+import { appStyle, typography, colors } from "app/theme"
 
 // constants
 import { sizes } from "app/constants"
@@ -23,24 +24,84 @@ interface CheckoutScreenProps extends AppStackScreenProps<"Checkout"> {}
 
 export const CheckoutScreen: FC<CheckoutScreenProps> = observer(function CheckoutScreen() {
   const rootStore = useStores()
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedPlateNo, setSelectedPlateNo] = useState("")
+  const [ticketId, setTicketId] = useState("")
+
+  const handleOpenModalOnPress = () => {
+    setIsOpen(true)
+  }
+
+  const handleCloseModalOnPress = () => {
+    setIsOpen(false)
+  }
+
+  const handleSelectDataOnPress = (value: any) => {
+    setIsOpen(false)
+    setSelectedPlateNo(value.plateNo)
+    setTicketId(value.id)
+  }
+
+  useEffect(() => {
+    if (rootStore.myParkingVehicle.length === 1) {
+      setSelectedPlateNo(rootStore.myParkingVehicle[0].plateNo)
+      setTicketId(rootStore.myParkingVehicle[0].id)
+    }
+  }, [])
 
   return (
     <SafeAreaView style={appStyle.rootContainer}>
-      {!rootStore.parkingTicket.length ? (
-        <>
-          <View style={[$container, $display]}>
-            <Image source={images.qrCode} resizeMode="contain" />
-            <Text style={$text} tx="scanQRCode" />
-          </View>
-          <View style={$container}>
+      {!rootStore.myParkingVehicle.length ? (
+        <View style={[$container, appStyle.flex1]}>
+          <View>
             <Icon style={$icon} icon="noVehicle" />
-            <Text style={$text2} tx="noVehicleInParkingLot" />
+            <Text style={$text} tx="noVehicleInParkingLot" />
           </View>
-        </>
+        </View>
       ) : (
-        <View style={$qrcodeContainer}>
-          <QRCode value={rootStore.parkingTicket[0]?.id} size={sizes.screenWidth * 0.65} />
-          <Text style={$scanQrText} tx="scanQRCode" />
+        <View style={[$container, appStyle.flex1]}>
+          <TouchableOpacity
+            style={$dropdownContainer}
+            activeOpacity={0.7}
+            onPress={handleOpenModalOnPress}
+          >
+            <Text style={$dropDownText} text={selectedPlateNo} />
+            <Icon icon="arrowDown" size={18} />
+          </TouchableOpacity>
+          {ticketId && (
+            <View style={$qrcodeContainer}>
+              <QRCode value={ticketId} size={sizes.screenWidth * 0.65} />
+              <Text style={$scanQrText} tx="scanQRCode" />
+            </View>
+          )}
+          <Modal
+            style={appStyle.flex1}
+            isVisible={isOpen}
+            backdropTransitionOutTiming={0}
+            onBackdropPress={handleCloseModalOnPress}
+            onBackButtonPress={handleCloseModalOnPress}
+          >
+            <View>
+              <ScrollView contentContainerStyle={$scrollViewContainer}>
+                {rootStore.myParkingVehicle.map((value, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    activeOpacity={0.7}
+                    onPress={() => handleSelectDataOnPress(value)}
+                  >
+                    {index === rootStore.myParkingVehicle.length - 1 ? (
+                      <Text text={value.plateNo} />
+                    ) : (
+                      <View>
+                        <Text text={value.plateNo} />
+                        <VerticalSeparator style={$separator} />
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          </Modal>
         </View>
       )}
     </SafeAreaView>
@@ -48,29 +109,17 @@ export const CheckoutScreen: FC<CheckoutScreenProps> = observer(function Checkou
 })
 
 const $container: ViewStyle = {
-  flex: 1,
   justifyContent: "center",
   alignItems: "center",
-}
-
-const $display: ViewStyle = {
-  display: "none",
-}
-
-const $text: TextStyle = {
-  paddingTop: 16,
-  fontFamily: typography.fonts.rubik.regular,
-  fontSize: 24,
-  width: sizes.screenWidth * 0.5,
-  textAlign: "center",
 }
 
 const $icon: ImageStyle = {
   width: sizes.screenWidth * 0.4,
   height: sizes.screenHeight * 0.2,
+  alignSelf: "center",
 }
 
-const $text2: TextStyle = {
+const $text: TextStyle = {
   paddingTop: 32,
   fontFamily: typography.fonts.rubik.regular,
   fontSize: 24,
@@ -81,9 +130,9 @@ const $text2: TextStyle = {
 }
 
 const $qrcodeContainer: ViewStyle = {
-  flex: 1,
   justifyContent: "center",
   alignItems: "center",
+  marginTop: 110,
 }
 
 const $scanQrText: TextStyle = {
@@ -92,4 +141,41 @@ const $scanQrText: TextStyle = {
   fontSize: 24,
   width: sizes.screenWidth * 0.65,
   textAlign: "center",
+}
+
+const $dropdownContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  borderWidth: 1,
+  borderBottomWidth: 1,
+  borderRadius: 5,
+  borderColor: colors.border,
+  paddingHorizontal: 10,
+  paddingVertical: 5,
+  height: 40,
+  marginHorizontal: 35,
+  marginTop: -80,
+}
+
+const $dropDownText: TextStyle = {
+  flex: 1,
+  paddingVertical: 0,
+  fontFamily: typography.fonts.rubik.regular,
+  fontSize: 14,
+  lineHeight: 18,
+  textAlignVertical: "center",
+  color: colors.black,
+}
+
+const $separator: ViewStyle = {
+  marginVertical: 15,
+}
+
+const $scrollViewContainer: ViewStyle = {
+  flexGrow: 1,
+  backgroundColor: colors.white,
+  paddingTop: 18,
+  paddingBottom: 26,
+  paddingHorizontal: 21,
+  borderRadius: 15,
 }

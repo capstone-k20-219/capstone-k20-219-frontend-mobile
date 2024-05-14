@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useRef } from "react"
 
 // modules
 import { StyleProp, View, ViewStyle, ScrollView } from "react-native"
@@ -22,14 +22,26 @@ export interface ParkingLotMapProps {
 export const ParkingLotMap = observer(function ParkingLotMap(props: ParkingLotMapProps) {
   const { style, interactiveMode = false } = props
   const rootStore = useStores()
+  const outerScrollViewRef = useRef<ScrollView>()
+  const innerScrollViewRef = useRef<ScrollView>()
+
+  useEffect(() => {
+    if (!interactiveMode && rootStore.firstParkingSlotCoordinate) {
+      const firstParkingSlot = rootStore.firstParkingSlotCoordinate
+      outerScrollViewRef.current.scrollTo({ y: firstParkingSlot.y_start - 200, animated: true })
+      innerScrollViewRef.current.scrollTo({ x: firstParkingSlot.x_start, animated: true })
+    }
+  }, [])
 
   return (
     <ScrollView
+      ref={outerScrollViewRef}
       contentContainerStyle={appStyle.flexGrow1}
       nestedScrollEnabled={true}
       showsVerticalScrollIndicator={false}
     >
       <ScrollView
+        ref={innerScrollViewRef}
         contentContainerStyle={appStyle.flexGrow1}
         horizontal
         showsHorizontalScrollIndicator={false}
