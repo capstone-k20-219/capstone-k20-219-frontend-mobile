@@ -11,6 +11,7 @@ import { Rating, Text, AddButton, BackButton, Input, PrimaryButton } from "app/c
 
 // hooks
 import { useForm } from "react-hook-form"
+import { useStores } from "app/models"
 
 // themes
 import { appStyle, colors, typography } from "app/theme"
@@ -21,10 +22,11 @@ import { CommentInfo } from "app/services/comment/comment.types"
 interface FeedbackScreenProps extends AppStackScreenProps<"Feedback"> {}
 
 export const FeedbackScreen: FC<FeedbackScreenProps> = observer(function FeedbackScreen(props) {
+  const rootStore = useStores()
   const [rating, setRating] = useState(0)
-  const { handleSubmit, control } = useForm<CommentInfo>({
+  const { handleSubmit, control, setValue } = useForm<CommentInfo>({
     defaultValues: {
-      rating,
+      rating: 0,
       content: "",
       serviceId: props.route.params.id,
     },
@@ -32,6 +34,7 @@ export const FeedbackScreen: FC<FeedbackScreenProps> = observer(function Feedbac
 
   const handleSubmitOnPress = (data: CommentInfo) => {
     console.log(data)
+    rootStore.postComment(data)
   }
 
   return (
@@ -44,7 +47,7 @@ export const FeedbackScreen: FC<FeedbackScreenProps> = observer(function Feedbac
             <AddButton style={appStyle.opacity0} disabled />
           </View>
           <View style={$formContainer}>
-            <Rating length={5} value={rating} onChange={setRating} size={55} />
+            <Rating length={5} value={rating} onChange={setRating} setValue={setValue} size={55} />
             <Input
               labelTx="serviceName"
               disable={true}

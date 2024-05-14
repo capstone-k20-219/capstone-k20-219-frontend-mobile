@@ -72,7 +72,7 @@ export const ServiceBox = observer(function ServiceBox(props: ServiceBoxProps) {
       <View style={$subContainer}>
         <Text style={[$serviceText(isSelected), textStyle]} text={serviceName} />
         <TouchableOpacity activeOpacity={activeOpacity} onPress={handleFeedbackOnPress}>
-          <Icon icon="feedback" size={22} />
+          <Icon icon="feedback" size={20} />
         </TouchableOpacity>
       </View>
       <Text style={[$priceText(isSelected), textStyle]} text={`$${price}`} />
@@ -93,7 +93,7 @@ const $container = (isSelected: boolean): ViewStyle => ({
 const $subContainer: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
-  columnGap: 10,
+  justifyContent: "space-between",
 }
 
 const $serviceText = (isSelected: boolean): TextStyle => ({

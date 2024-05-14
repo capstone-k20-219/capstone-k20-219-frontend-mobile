@@ -10,6 +10,9 @@ import { Icon } from "./Icon"
 // themes
 import { colors } from "app/theme"
 
+// hooks
+import { UseFormSetValue } from "react-hook-form"
+
 export interface RatingProps {
   style?: StyleProp<ViewStyle>
   length?: number
@@ -17,12 +20,16 @@ export interface RatingProps {
   value: number
   size?: number
   activeOpacity?: number
+  setValue?: UseFormSetValue<any>
 }
 
 export const Rating = observer(function Rating(props: RatingProps) {
-  const { style, length, onChange, value, size = 18, activeOpacity = 0.7 } = props
+  const { style, length, onChange, value, size = 18, activeOpacity = 0.7, setValue } = props
 
-  const highlightStar = useCallback((index) => onChange(index + 1), []) as (index: number) => void
+  const highlightStar = useCallback((index) => {
+    setValue("rating", index + 1)
+    onChange(index + 1)
+  }, []) as (index: number) => void
 
   return (
     <View style={[$container, style]}>
