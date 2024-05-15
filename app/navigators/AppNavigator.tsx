@@ -83,6 +83,7 @@ const AppStack = observer(function AppStack() {
           rootStore.getMyVehicles()
           rootStore.getVehicleType()
           rootStore.getParkingTicket()
+          rootStore.getSlotBooking()
         }
       }
     }

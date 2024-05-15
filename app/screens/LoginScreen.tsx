@@ -73,6 +73,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(p
       rootStore.getMyVehicles()
       rootStore.getVehicleType()
       rootStore.getParkingTicket()
+      rootStore.getSlotBooking()
       props.navigation.navigate("Home")
       reset()
     }

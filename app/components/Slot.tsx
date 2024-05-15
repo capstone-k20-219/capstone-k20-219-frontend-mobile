@@ -54,7 +54,12 @@ export const Slot = observer(function Slot(props: SlotProps) {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (rootStore.postVehicleStatus === "done" || rootStore.deleteVehicleStatus === "done") {
+      if (
+        (rootStore.postVehicleStatus === "done" ||
+          rootStore.deleteVehicleStatus === "done" ||
+          rootStore.vehicle.length) &&
+        interactiveMode
+      ) {
         rootStore.getSuitableBookingVehicle(slotInfo.id).then((res) => {
           setSuitableVehicle(res)
         })

@@ -112,6 +112,7 @@ const vn: Translations = {
   invalidTimePeriod: "Thời gian đặt chỗ phải từ {{fromTime}} đến {{toTime}}",
   bookingSuccessTitle: "Đặt chỗ thành công!",
   bookingSuccess: "Yêu cầu đặt chỗ của bạn đã được tạo thành công!",
+  bookingRequestSentAt: "Yêu cầu đặt chỗ được gửi lúc",
 }
 
 export default vn

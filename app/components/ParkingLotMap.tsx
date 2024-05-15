@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useRef } from "react"
 
 // modules
 import { StyleProp, View, ViewStyle, ScrollView } from "react-native"
@@ -10,6 +10,7 @@ import { MapBackground } from "./MapBackground"
 
 // hooks
 import { useStores } from "app/models"
+import { useFocusEffect } from "@react-navigation/native"
 
 // themes
 import { appStyle } from "app/theme"
@@ -25,13 +26,15 @@ export const ParkingLotMap = observer(function ParkingLotMap(props: ParkingLotMa
   const outerScrollViewRef = useRef<ScrollView>()
   const innerScrollViewRef = useRef<ScrollView>()
 
-  useEffect(() => {
-    if (!interactiveMode && rootStore.firstParkingSlotCoordinate) {
-      const firstParkingSlot = rootStore.firstParkingSlotCoordinate
-      outerScrollViewRef.current.scrollTo({ y: firstParkingSlot.y_start - 200, animated: true })
-      innerScrollViewRef.current.scrollTo({ x: firstParkingSlot.x_start, animated: true })
-    }
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!interactiveMode && rootStore.firstParkingSlotCoordinate) {
+        const firstParkingSlot = rootStore.firstParkingSlotCoordinate
+        outerScrollViewRef.current.scrollTo({ y: firstParkingSlot.y_start - 200, animated: true })
+        innerScrollViewRef.current.scrollTo({ x: firstParkingSlot.x_start - 100, animated: true })
+      }
+    }, []),
+  )
 
   return (
     <ScrollView

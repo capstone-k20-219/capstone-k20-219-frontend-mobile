@@ -62,7 +62,7 @@ const en = {
   untilYourBookingExpire: "Until your booking expired!",
   parkingDetail: "Parking Details",
   vehicleID: "Vehicle ID",
-  parkingSlotID: "Parknig slot ID",
+  parkingSlotID: "Parking slot ID",
   noVehicleInParkingLot: "You have no vehicle in the parking lot!",
   paymentSuccess: "PAYMENT SUCCESS",
   transactionID: "Transaction ID",
@@ -109,6 +109,7 @@ const en = {
   invalidTimePeriod: "Booking time should be from {{fromTime}} to {{toTime}}",
   bookingSuccessTitle: "Booking success!",
   bookingSuccess: "Your booking has been successfully created!",
+  bookingRequestSentAt: "Booking request sent at",
 }
 
 export default en

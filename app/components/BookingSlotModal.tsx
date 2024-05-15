@@ -45,7 +45,6 @@ export const BookingSlotModal = observer(function BookingSlotModal(props: Bookin
   const [date, setDate] = useState(new Date())
   const [time, setTime] = useState(new Date())
   const rootStore = useStores()
-  const fee = rootStore.getParkingSlotFee(parkingSlotId)
   const { handleSubmit, control, setValue, getValues, reset } = useForm<FormData>({
     defaultValues: {
       parkingSlotId,
@@ -168,11 +167,17 @@ export const BookingSlotModal = observer(function BookingSlotModal(props: Bookin
               <>
                 <View style={appStyle.justifySpaceBetwwen}>
                   <Text style={$summaryText} tx="bookingFee" />
-                  <Text style={$summaryText} text={`$${fee.slotBookingFee}`} />
+                  <Text
+                    style={$summaryText}
+                    text={`$${rootStore.getParkingSlotFee(parkingSlotId).slotBookingFee}`}
+                  />
                 </View>
                 <View style={appStyle.justifySpaceBetwwen}>
                   <Text style={$summaryText} tx="parkingFeePerHour" />
-                  <Text style={$summaryText} text={`$${fee.parkingFee}`} />
+                  <Text
+                    style={$summaryText}
+                    text={`$${rootStore.getParkingSlotFee(parkingSlotId).parkingFee}`}
+                  />
                 </View>
                 <View style={appStyle.justifySpaceBetwwen}>
                   <Text style={$summaryText} tx="bookingTime" />

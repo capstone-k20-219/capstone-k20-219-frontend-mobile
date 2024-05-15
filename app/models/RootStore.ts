@@ -24,6 +24,7 @@ import { remove } from "app/utils/storage/storage"
 // i18n
 import { translate } from "app/i18n"
 import { navigationRef } from "app/navigators"
+
 const BankAccountInfo = types
   .model("BankAccountInfo")
   .props({
@@ -130,6 +131,7 @@ const SlotBooking = types
     vehicleId: types.maybeNull(types.number),
     arrivalTime: types.maybeNull(types.Date),
     id: types.maybeNull(types.number),
+    createdAt: types.maybeNull(types.Date),
   })
   .actions(withSetPropAction)
 
@@ -146,6 +148,8 @@ export const RootStoreModel = types
     slotBooking: types.optional(SlotBooking, {}),
     postVehicleStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
     deleteVehicleStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
+    getSlotBookingStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
+    postSlotBookingStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
   })
   .actions(withSetPropAction)
   .actions((store) => ({
@@ -237,7 +241,7 @@ export const RootStoreModel = types
         store.userInfo.setProp("name", response.data.name)
         store.userInfo.setProp(
           "dob",
-          new Date(response.data.dob).setHours(new Date(response.data.dob).getHours() + 7),
+          new Date(response.data.dob).setHours(new Date(response.data.dob).getHours()),
         )
         store.userInfo.setProp("phone", response.data.phone)
         store.userInfo.setProp("image", response.data.image)
@@ -265,6 +269,10 @@ export const RootStoreModel = types
         store.setProp("service", [{}])
         store.setProp("parkingTicket", [{}])
         store.setProp("slotBooking", {})
+        store.setProp("postVehicleStatus", null)
+        store.setProp("deleteVehicleStatus", null)
+        store.setProp("getSlotBookingStatus", null)
+        store.setProp("postSlotBookingStatus", null)
         api.apisauce.setHeader("Authorization", "")
         yield remove("refresh_token")
       } else {
@@ -448,6 +456,7 @@ export const RootStoreModel = types
   }))
   .actions((store) => ({
     postSlotBooking: flow(function* (payload: SlotBookingInfo) {
+      store.setProp("postSlotBookingStatus", "loading")
       let response = yield api.booking.postSlotBooking(payload)
       if (response.kind === "unauthorized") {
         yield api.auth.postRefreshToken()
@@ -460,27 +469,57 @@ export const RootStoreModel = types
         store.slotBooking.setProp(
           "arrivalTime",
           new Date(response.data.arrivalTime).setHours(
-            new Date(response.data.arrivalTime).getHours() + 7,
+            new Date(response.data.arrivalTime).getHours(),
           ),
         )
+        store.slotBooking.setProp(
+          "createdAt",
+          new Date(response.data.createdAt).setHours(new Date(response.data.createdAt).getHours()),
+        )
         Alert.alert(translate("bookingSuccessTitle"), translate("bookingSuccess"))
+        store.setProp("postSlotBookingStatus", "done")
       } else {
+        store.setProp("postSlotBookingStatus", "error")
         alert(JSON.stringify(response))
       }
+      store.setProp("postSlotBookingStatus", null)
     }),
   }))
-  .actions(() => ({
+  .actions((store) => ({
     getSlotBooking: flow(function* () {
+      store.setProp("getSlotBookingStatus", "loading")
       let response = yield api.booking.getSlotBooking()
       if (response.kind === "unauthorized") {
         yield api.auth.postRefreshToken()
         response = yield api.booking.getSlotBooking()
       }
       if (response.kind === "ok") {
-        console.log(JSON.stringify(response))
+        if (response.data.length === 0) {
+          store.setProp("getSlotBookingStatus", null)
+          store.setProp("slotBooking", {})
+        } else {
+          store.slotBooking.setProp("id", response.data[0].id)
+          store.slotBooking.setProp("slotId", response.data[0].slotId)
+          store.slotBooking.setProp("vehicleId", response.data[0].vehicleId)
+          store.slotBooking.setProp(
+            "arrivalTime",
+            new Date(response.data[0].arrivalTime).setHours(
+              new Date(response.data[0].arrivalTime).getHours(),
+            ),
+          )
+          store.slotBooking.setProp(
+            "createdAt",
+            new Date(response.data[0].createdAt).setHours(
+              new Date(response.data[0].createdAt).getHours(),
+            ),
+          )
+          store.setProp("getSlotBookingStatus", "done")
+        }
       } else {
+        store.setProp("getSlotBookingStatus", "error")
         alert(JSON.stringify(response))
       }
+      store.setProp("getSlotBookingStatus", null)
     }),
   }))
   .actions((store) => ({
@@ -539,6 +578,13 @@ export const RootStoreModel = types
         return store.parkingTicket.map(({ plateNo }) => plateNo)
       } else {
         return []
+      }
+    },
+    get myBookingPlateNo() {
+      if (store.slotBooking.id) {
+        return store.vehicle.find((vehicle) => vehicle.id === store.slotBooking.vehicleId)?.plateNo
+      } else {
+        return ""
       }
     },
   }))
