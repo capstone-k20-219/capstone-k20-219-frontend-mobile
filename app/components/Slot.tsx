@@ -64,7 +64,7 @@ export const Slot = observer(function Slot(props: SlotProps) {
           setSuitableVehicle(res)
         })
       }
-    }, [rootStore.postVehicleStatus, rootStore.deleteVehicleStatus]),
+    }, [rootStore.postVehicleStatus, rootStore.deleteVehicleStatus, rootStore.vehicle]),
   )
 
   return (

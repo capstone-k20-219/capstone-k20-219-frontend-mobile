@@ -2369,6 +2369,11 @@
     opencollective-postinstall "^2.0.3"
     superstruct "^0.6.2"
 
+"@react-native-firebase/database@^19.2.2":
+  version "19.2.2"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/database/-/database-19.2.2.tgz#185947fe1d2a5fd9051aaba6fc366ba54c8c5ddb"
+  integrity sha512-ZLFN34Uqtdnv7YJe9pgm6teo7wzN3gHdNz1SHRzPn8wvHj375yf7ej2jTXsIw7FQhjs1RvdQZpQYiidAfLR/wA==
+
 "@react-native-firebase/storage@^19.2.2":
   version "19.2.2"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-19.2.2.tgz#3edaffc453ccfbc3d37d755f94c65eaca7cb4718"
@@ -10884,9 +10889,9 @@ react-native-bootsplash@4.5.0:
     sharp "^0.31.3"
 
 react-native-calendars@^1.1303.0:
-  version "1.1304.1"
-  resolved "https://registry.yarnpkg.com/react-native-calendars/-/react-native-calendars-1.1304.1.tgz#a09f7f8eee84d8634c3fe2de5e293fa7e8f12077"
-  integrity sha512-D1aU5lLhi7KCCCeHhKOkcC41K8s3paiiIfMaOQx6NezCbgKHelqT01WPpAZLh3Cm0QTC5EZo0oDPD0mCdKrDgQ==
+  version "1.1305.0"
+  resolved "https://registry.yarnpkg.com/react-native-calendars/-/react-native-calendars-1.1305.0.tgz#a27369e593968aa83404624fa2ae71f33fc97130"
+  integrity sha512-KcT7fhDo8Tx2vx2q6RtyYGHRgKp2siY183czD95U+swytT6m1HAWEX5bZFpl/c4oih0IamAB0qoGOMJCWkYweQ==
   dependencies:
     hoist-non-react-statics "^3.3.1"
     lodash "^4.17.15"

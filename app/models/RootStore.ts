@@ -10,6 +10,7 @@ import { withSetPropAction } from "./helpers/withSetPropAction"
 
 // services
 import { api } from "app/services/api"
+import database from "@react-native-firebase/database"
 
 // interfaces
 import { LoginInfo } from "app/services/authentication/auth.types"
@@ -146,6 +147,8 @@ export const RootStoreModel = types
     service: types.array(types.optional(Service, {})),
     parkingTicket: types.array(types.optional(ParkingTicket, {})),
     slotBooking: types.optional(SlotBooking, {}),
+    checkInStatus: types.maybeNull(types.boolean),
+    checkOutStatus: types.maybeNull(types.boolean),
     postVehicleStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
     deleteVehicleStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
     getSlotBookingStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
@@ -269,6 +272,8 @@ export const RootStoreModel = types
         store.setProp("service", [{}])
         store.setProp("parkingTicket", [{}])
         store.setProp("slotBooking", {})
+        store.setProp("checkInStatus", null)
+        store.setProp("checkOutStatus", null)
         store.setProp("postVehicleStatus", null)
         store.setProp("deleteVehicleStatus", null)
         store.setProp("getSlotBookingStatus", null)
@@ -520,6 +525,28 @@ export const RootStoreModel = types
         alert(JSON.stringify(response))
       }
       store.setProp("getSlotBookingStatus", null)
+    }),
+  }))
+  .actions((store) => ({
+    checkin: flow(function* () {
+      if (store.checkInStatus) {
+        store.getSlotInfo()
+        store.getParkingTicket()
+        store.getSlotBooking()
+        store.setProp("checkInStatus", false)
+        database().ref("/checkInStatus").set(false)
+      }
+    }),
+  }))
+  .actions((store) => ({
+    checkout: flow(function* () {
+      if (store.checkOutStatus) {
+        store.getSlotInfo()
+        store.getParkingTicket()
+        store.getSlotBooking()
+        store.setProp("checkOutStatus", false)
+        database().ref("/checkOutStatus").set(false)
+      }
     }),
   }))
   .actions((store) => ({

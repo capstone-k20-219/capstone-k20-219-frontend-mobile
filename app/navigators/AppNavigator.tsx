@@ -13,6 +13,7 @@ import { useStores } from "app/models"
 import { loadString, remove } from "app/utils/storage"
 import { api } from "app/services/api"
 import { translate } from "app/i18n"
+import database from "@react-native-firebase/database"
 
 export type AppStackParamList = {
   Login: undefined
@@ -88,6 +89,27 @@ const AppStack = observer(function AppStack() {
       }
     }
     checkRefreshTokenExpiration()
+
+    const checkoutStatusRef = database()
+      .ref("/checkOutStatus")
+      .on("value", (snapshot) => {
+        if (snapshot.val()) {
+          rootStore.setProp("checkOutStatus", snapshot.val())
+        }
+      })
+
+    const checkInStatusRef = database()
+      .ref("/checkInStatus")
+      .on("value", (snapshot) => {
+        if (snapshot.val()) {
+          rootStore.setProp("checkInStatus", snapshot.val())
+        }
+      })
+
+    return () => {
+      database().ref("/checkOutStatus").off("value", checkoutStatusRef)
+      database().ref("/checkInStatus").off("value", checkInStatusRef)
+    }
   }, [])
 
   return (

@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react"
+import React, { FC, useEffect, useState } from "react"
 
 // modules
 import { observer } from "mobx-react-lite"
@@ -27,12 +27,26 @@ export const BookingScreen: FC<BookingScreenProps> = observer(function BookingSc
       if (
         rootStore.getSlotBookingStatus === "done" ||
         rootStore.postSlotBookingStatus === "done" ||
-        rootStore.slotBooking?.id
+        rootStore.slotBooking.id !== null
       ) {
         setIsBooked(true)
+      } else {
+        setIsBooked(false)
       }
-    }, [rootStore.getSlotBookingStatus, rootStore.postSlotBookingStatus]),
+    }, [rootStore.getSlotBookingStatus, rootStore.postSlotBookingStatus, rootStore.checkInStatus]),
   )
+
+  useEffect(() => {
+    if (rootStore.checkInStatus) {
+      rootStore.checkin()
+    }
+  }, [rootStore.checkInStatus])
+
+  useEffect(() => {
+    if (rootStore.checkOutStatus) {
+      rootStore.checkout()
+    }
+  }, [rootStore.checkOutStatus])
 
   return (
     <SafeAreaView style={appStyle.rootContainer}>

@@ -43,11 +43,23 @@ export const CheckoutScreen: FC<CheckoutScreenProps> = observer(function Checkou
   }
 
   useEffect(() => {
-    if (rootStore.myParkingVehicle.length === 1) {
+    if (rootStore.myParkingVehicle.length >= 1) {
       setSelectedPlateNo(rootStore.myParkingVehicle[0].plateNo)
       setTicketId(rootStore.myParkingVehicle[0].id)
     }
   }, [])
+
+  useEffect(() => {
+    if (rootStore.checkInStatus) {
+      rootStore.checkin()
+    }
+  }, [rootStore.checkInStatus])
+
+  useEffect(() => {
+    if (rootStore.checkOutStatus) {
+      rootStore.checkout()
+    }
+  }, [rootStore.checkOutStatus])
 
   return (
     <SafeAreaView style={appStyle.rootContainer}>

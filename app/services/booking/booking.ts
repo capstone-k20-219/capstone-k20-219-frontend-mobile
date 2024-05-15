@@ -20,6 +20,7 @@ export class BookingApi {
     if (response.ok) {
       return { kind: "ok", data: response.data }
     } else {
+      console.log(JSON.stringify(response))
       return getGeneralApiProblem(response)
     }
   }
