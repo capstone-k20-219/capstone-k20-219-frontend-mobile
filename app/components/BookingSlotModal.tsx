@@ -15,48 +15,86 @@ import { DropDownList } from "app/components/DropDownList"
 
 // hooks
 import { useForm } from "react-hook-form"
+import { useStores } from "app/models"
 
 // themes
 import { appStyle, colors, typography } from "app/theme"
 import { sizes } from "app/constants"
+
+// date-fns
+import { format } from "date-fns"
+import { translate } from "app/i18n"
 
 export interface BookingSlotModalProps {
   style?: StyleProp<ViewStyle>
   visibility?: boolean
   setVisibility?: React.Dispatch<React.SetStateAction<boolean>>
   parkingSlotId?: string
+  vehicleData?: any[]
 }
 
 interface FormData {
   parkingSlotId?: string
-  vehicle?: string
+  vehicleId?: number
   arrivalTime?: string
   arrivalDate?: string
 }
 
 export const BookingSlotModal = observer(function BookingSlotModal(props: BookingSlotModalProps) {
-  const { style, visibility, setVisibility, parkingSlotId = "" } = props
+  const { style, visibility, setVisibility, parkingSlotId = "", vehicleData } = props
   const [date, setDate] = useState(new Date())
   const [time, setTime] = useState(new Date())
+  const rootStore = useStores()
+  const fee = rootStore.getParkingSlotFee(parkingSlotId)
   const { handleSubmit, control, setValue, getValues, reset } = useForm<FormData>({
     defaultValues: {
       parkingSlotId,
-      vehicle: "",
+      vehicleId: 0,
       arrivalDate: "",
       arrivalTime: "",
     },
   })
 
-  const data: string[] = ["PH345-5634", "PH345-5634", "PH345-5634", "PH345-5634"]
-
   const handleDismissBookingModalOnPress = () => {
     setVisibility(false)
+    reset()
+    setDate(new Date())
+    setTime(new Date())
   }
 
   const handleSubmitOnPress = (data: FormData) => {
     setVisibility(false)
-    console.log(data)
+    const arrivalTime = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      time.getHours(),
+      time.getMinutes(),
+    )
+    rootStore.postSlotBooking({
+      slotId: data.parkingSlotId,
+      vehicleId: data.vehicleId,
+      arrivalTime,
+    })
     reset()
+    setDate(new Date())
+    setTime(new Date())
+  }
+
+  const checkTimeInterval = (time: Date, date: Date) => {
+    const currentTime = new Date().getTime()
+    const arrivalTime = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      time.getHours(),
+      time.getMinutes(),
+    ).getTime()
+    const timeGap = (arrivalTime - currentTime) / 1000
+    if (timeGap > 86400 || timeGap <= 1800) {
+      return false
+    }
+    return true
   }
 
   return (
@@ -80,11 +118,12 @@ export const BookingSlotModal = observer(function BookingSlotModal(props: Bookin
           />
           <DropDownList
             control={control}
-            controlName="vehicle"
+            controlName="vehicleId"
             isOutline={true}
             labelTx="vehicle"
             setValue={setValue}
-            data={data}
+            data={vehicleData}
+            type="vehicle"
           />
           <Picker
             control={control}
@@ -109,22 +148,51 @@ export const BookingSlotModal = observer(function BookingSlotModal(props: Bookin
         </View>
         {getValues("arrivalTime") !== "" && getValues("arrivalDate") !== "" && (
           <View style={$summaryContainer}>
-            <View style={appStyle.justifySpaceBetwwen}>
-              <Text style={$summaryText} tx="bookingFee" />
-              <Text style={$summaryText} text={"$1.00"} />
-            </View>
-            <View style={appStyle.justifySpaceBetwwen}>
-              <Text style={$summaryText} tx="bookingTime" />
-              <Text
-                style={$summaryText}
-                text={`${getValues("arrivalTime")} ${getValues("arrivalDate")}`}
-              />
-            </View>
-            <VerticalSeparator />
-            <View style={appStyle.justifySpaceBetwwen}>
-              <Text style={$summaryText} tx="totalCost" />
-              <Text style={$summaryText} text={"$2.00"} />
-            </View>
+            {!checkTimeInterval(time, date) ? (
+              <View>
+                <Text
+                  style={$warningText}
+                  text={translate("invalidTimePeriod", {
+                    fromTime: format(
+                      new Date().setMinutes(new Date().getMinutes() + 30),
+                      "HH:mm dd/MM/yyyy",
+                    ),
+                    toTime: format(
+                      new Date().setHours(new Date().getHours() + 24),
+                      "HH:mm dd/MM/yyyy",
+                    ),
+                  })}
+                />
+              </View>
+            ) : (
+              <>
+                <View style={appStyle.justifySpaceBetwwen}>
+                  <Text style={$summaryText} tx="bookingFee" />
+                  <Text style={$summaryText} text={`$${fee.slotBookingFee}`} />
+                </View>
+                <View style={appStyle.justifySpaceBetwwen}>
+                  <Text style={$summaryText} tx="parkingFeePerHour" />
+                  <Text style={$summaryText} text={`$${fee.parkingFee}`} />
+                </View>
+                <View style={appStyle.justifySpaceBetwwen}>
+                  <Text style={$summaryText} tx="bookingTime" />
+                  <Text
+                    style={$summaryText}
+                    text={`${getValues("arrivalTime")} ${getValues("arrivalDate")}`}
+                  />
+                </View>
+                <View style={appStyle.justifySpaceBetwwen}>
+                  <Text style={$summaryText} tx="bookingExpiredAt" />
+                  <Text
+                    style={$summaryText}
+                    text={`${format(
+                      new Date(time).setMinutes(time.getMinutes() + 30),
+                      "HH:mm",
+                    )} ${getValues("arrivalDate")}`}
+                  />
+                </View>
+              </>
+            )}
           </View>
         )}
         <View style={$buttonContainer}>
@@ -137,6 +205,10 @@ export const BookingSlotModal = observer(function BookingSlotModal(props: Bookin
           <SecondaryButton
             style={$button}
             titleTx="book"
+            disabled={!checkTimeInterval(time, date)}
+            color={
+              !checkTimeInterval(time, date) ? colors.palette.neutral400 : colors.palette.primary200
+            }
             onPress={handleSubmit(handleSubmitOnPress)}
           />
         </View>
@@ -183,7 +255,7 @@ const $summaryContainer: ViewStyle = {
 
 const $summaryText: TextStyle = {
   fontFamily: typography.fonts.rubik.regular,
-  fontSize: 12,
+  fontSize: 14,
   lineHeight: 16,
   color: colors.black,
 }
@@ -200,3 +272,24 @@ const $button: ViewStyle = {
   width: sizes.screenWidth * 0.25,
   height: 38,
 }
+
+const $warningText: TextStyle = {
+  fontFamily: typography.fonts.rubik.regular,
+  fontSize: 14,
+  lineHeight: 16,
+  color: "red",
+  textAlign: "center",
+  alignSelf: "center",
+  width: "100%",
+}
+
+// const $buttonCancel: ViewStyle = {
+//   width: sizes.screenWidth * 0.25,
+//   height: 38,
+//   borderColor: colors.palette.primary200,
+//   borderWidth: 1,
+// }
+
+// const $cancelText: TextStyle = {
+//   color: colors.palette.primary200,
+// }

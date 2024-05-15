@@ -100,7 +100,15 @@ const en = {
   feedbackService: "Service feedback",
   serviceName: "Service name",
   feedbackPlaceholder: "Please write your feedback here...",
-  noAvailableService: "No available service",
+  noAvailableService: "No available service or your vehicle has not entered the parking lot.",
+  parkingFeePerHour: "Parking fee per hour",
+  bookingExpiredAt: "Booking expired at",
+  noSuitableVehicleTitle: "No suitable vehicle found!",
+  noSuitableVehicle:
+    "There are no {{vehicleType}} in your vehicle list, please add a {{vehicleType}} to your vehicle list to book this slot.",
+  invalidTimePeriod: "Booking time should be from {{fromTime}} to {{toTime}}",
+  bookingSuccessTitle: "Booking success!",
+  bookingSuccess: "Your booking has been successfully created!",
 }
 
 export default en

@@ -31,4 +31,8 @@ export const appStyle = StyleSheet.create({
   opacity0: {
     opacity: 0,
   },
+  borderColorPrimary: {
+    borderColor: colors.palette.primary200,
+    borderWidth: 1,
+  },
 })

@@ -91,7 +91,7 @@ export const DropDownList = observer(function DropDownList(props: DropDownListPr
       if (type === "vehicle") {
         setPlateNo(data.plateNo)
         setVehicleType(translate(data.type.id.toLocaleLowerCase() as TxKeyPath))
-        if (rootStore.parkingTicket[0].plateNo === data.plateNo) rootStore.getServices(data.type.id)
+        if (rootStore.myParkingPlateNo.includes(data.plateNo)) rootStore.getServices(data.type.id)
         else {
           rootStore.setProp("service", [])
         }
@@ -102,12 +102,15 @@ export const DropDownList = observer(function DropDownList(props: DropDownListPr
 
   useEffect(() => {
     if (data.length === 1) {
-      setValue(controlName, data)
+      if (type === "bank") setValue(controlName, data)
       if (type === "vehicleType") {
         setVehicleTypeName(data[0].name)
+        setValue(controlName, data[0].id)
       }
       if (type === "vehicle") {
+        setValue(controlName, data[0].id)
         setPlateNo(data[0].plateNo)
+        setVehicleType(translate(data[0].type.id.toLocaleLowerCase() as TxKeyPath))
       }
     }
   }, [])

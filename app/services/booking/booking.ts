@@ -24,6 +24,15 @@ export class BookingApi {
     }
   }
 
+  async getSlotBooking(): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.api.get(`/slot-bookings/my`)
+    if (response.ok) {
+      return { kind: "ok", data: response.data }
+    } else {
+      return getGeneralApiProblem(response)
+    }
+  }
+
   async postServiceBooking(
     payload: ServiceBookingInfo,
   ): Promise<{ kind: "ok"; data: any } | GeneralApiProblem> {

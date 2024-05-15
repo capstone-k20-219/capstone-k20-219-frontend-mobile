@@ -102,7 +102,16 @@ const vn: Translations = {
   feedbackService: "Phản hồi dịch vụ",
   serviceName: "Tên dịch vụ",
   feedbackPlaceholder: "Nhập phản hồi của bạn...",
-  noAvailableService: "Không có dịch vụ nào khả dụng",
+  noAvailableService:
+    "Không có dịch vụ nào được cung cấp hoặc phương tiện của bạn chưa vào bãi xe.",
+  parkingFeePerHour: "Phí đỗ xe mỗi giờ",
+  bookingExpiredAt: "Đặt chỗ hết hạn vào",
+  noSuitableVehicleTitle: "Không tìm thấy phương tiện phù hợp!",
+  noSuitableVehicle:
+    "Bạn không có {{vehicleType}} trong danh sách phương tiện của mình, vui lòng thêm {{vehicleType}} vào danh sách phương tiện để đặt chỗ này.",
+  invalidTimePeriod: "Thời gian đặt chỗ phải từ {{fromTime}} đến {{toTime}}",
+  bookingSuccessTitle: "Đặt chỗ thành công!",
+  bookingSuccess: "Yêu cầu đặt chỗ của bạn đã được tạo thành công!",
 }
 
 export default vn

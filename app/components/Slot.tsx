@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 
 // modules
-import { StyleProp, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
+import { Alert, StyleProp, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 
 // components
@@ -10,12 +10,16 @@ import { BookingSlotModal } from "./BookingSlotModal"
 
 // hooks
 import { useStores } from "app/models"
+import { useFocusEffect } from "@react-navigation/native"
 
 // themes
 import { colors, typography } from "app/theme"
 
 // interfaces
 import { SlotInfo } from "app/services/parkingSlot/parkingSlot.types"
+
+// i18n
+import { TxKeyPath, translate } from "app/i18n"
 
 export interface SlotProps {
   style?: StyleProp<ViewStyle>
@@ -28,11 +32,35 @@ export const Slot = observer(function Slot(props: SlotProps) {
   const { style, slotInfo, activeOpacity = 0.7, interactiveMode = false } = props
   const [isModalOpen, setIsModalOpen] = useState(false)
   const rootStore = useStores()
+  const [suitableVehicle, setSuitableVehicle] = useState([])
   const slotOffset = rootStore.slotOffset
 
   const handleOpenModalOnPress = () => {
-    setIsModalOpen(true)
+    if (suitableVehicle.length) {
+      setIsModalOpen(true)
+    } else {
+      Alert.alert(
+        translate("noSuitableVehicleTitle"),
+        translate("noSuitableVehicle", {
+          vehicleType: translate(
+            slotInfo.typeId.toLocaleLowerCase() as TxKeyPath,
+          ).toLocaleLowerCase(),
+        }),
+        [{ text: "OK" }],
+        { cancelable: false },
+      )
+    }
   }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (rootStore.postVehicleStatus === "done" || rootStore.deleteVehicleStatus === "done") {
+        rootStore.getSuitableBookingVehicle(slotInfo.id).then((res) => {
+          setSuitableVehicle(res)
+        })
+      }
+    }, [rootStore.postVehicleStatus, rootStore.deleteVehicleStatus]),
+  )
 
   return (
     <TouchableOpacity
@@ -49,6 +77,7 @@ export const Slot = observer(function Slot(props: SlotProps) {
         visibility={isModalOpen}
         setVisibility={setIsModalOpen}
         parkingSlotId={slotInfo.id}
+        vehicleData={suitableVehicle}
       />
     </TouchableOpacity>
   )

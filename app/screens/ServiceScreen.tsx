@@ -160,4 +160,7 @@ const $noServiceText: TextStyle = {
   color: colors.black,
   textAlign: "center",
   paddingVertical: 24,
+  width: "80%",
+  alignSelf: "center",
+  opacity: 0.8,
 }

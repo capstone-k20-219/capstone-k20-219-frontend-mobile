@@ -16,6 +16,7 @@ import { LoginInfo } from "app/services/authentication/auth.types"
 import { RegisterInfo, UpdateInfo, BankAccount } from "app/services/user/user.types"
 import { VehicleInfo } from "app/services/vehicle/vehicle.types"
 import { CommentInfo } from "app/services/comment/comment.types"
+import { SlotBookingInfo } from "app/services/booking/booking.types"
 
 // async storage
 import { remove } from "app/utils/storage/storage"
@@ -122,6 +123,16 @@ const ParkingTicket = types
   })
   .actions(withSetPropAction)
 
+const SlotBooking = types
+  .model("SlotBooking")
+  .props({
+    slotId: types.maybeNull(types.string),
+    vehicleId: types.maybeNull(types.number),
+    arrivalTime: types.maybeNull(types.Date),
+    id: types.maybeNull(types.number),
+  })
+  .actions(withSetPropAction)
+
 export const RootStoreModel = types
   .model("RootStore")
   .props({
@@ -132,6 +143,9 @@ export const RootStoreModel = types
     slotInfo: types.array(types.optional(SlotInfo, {})),
     service: types.array(types.optional(Service, {})),
     parkingTicket: types.array(types.optional(ParkingTicket, {})),
+    slotBooking: types.optional(SlotBooking, {}),
+    postVehicleStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
+    deleteVehicleStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
   })
   .actions(withSetPropAction)
   .actions((store) => ({
@@ -151,6 +165,7 @@ export const RootStoreModel = types
   }))
   .actions((store) => ({
     postVehicle: flow(function* (payload: VehicleInfo) {
+      store.setProp("postVehicleStatus", "loading")
       let response = yield api.vehicle.postVehicle(payload)
       if (response.kind === "unauthorized") {
         yield api.auth.postRefreshToken()
@@ -167,8 +182,10 @@ export const RootStoreModel = types
             description: "",
           },
         ])
+        store.setProp("postVehicleStatus", "done")
       } else {
         alert(JSON.stringify(response))
+        store.setProp("postVehicleStatus", "error")
       }
     }),
   }))
@@ -247,6 +264,7 @@ export const RootStoreModel = types
         store.setProp("slotInfo", [{}])
         store.setProp("service", [{}])
         store.setProp("parkingTicket", [{}])
+        store.setProp("slotBooking", {})
         api.apisauce.setHeader("Authorization", "")
         yield remove("refresh_token")
       } else {
@@ -340,16 +358,21 @@ export const RootStoreModel = types
   }))
   .actions((store) => ({
     deleteVehicle: flow(function* (vehicleId: number) {
+      store.setProp("deleteVehicleStatus", "loading")
       let response = yield api.vehicle.deleteVehicle(vehicleId)
       if (response.kind === "unauthorized") {
         yield api.auth.postRefreshToken()
         response = yield api.vehicle.deleteVehicle(vehicleId)
       }
       if (response.kind === "ok") {
-        const data = store.vehicle.filter((item) => item.id !== vehicleId)
-        store.setProp("vehicle", data)
+        store.setProp(
+          "vehicle",
+          store.vehicle.filter((item) => item.id !== vehicleId),
+        )
+        store.setProp("deleteVehicleStatus", "done")
       } else {
         alert(JSON.stringify(response))
+        store.setProp("deleteVehicleStatus", "error")
       }
     }),
   }))
@@ -423,6 +446,62 @@ export const RootStoreModel = types
       }
     }),
   }))
+  .actions((store) => ({
+    postSlotBooking: flow(function* (payload: SlotBookingInfo) {
+      let response = yield api.booking.postSlotBooking(payload)
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.booking.postSlotBooking(payload)
+      }
+      if (response.kind === "ok") {
+        store.slotBooking.setProp("id", response.data.id)
+        store.slotBooking.setProp("slotId", response.data.slotId)
+        store.slotBooking.setProp("vehicleId", response.data.vehicleId)
+        store.slotBooking.setProp(
+          "arrivalTime",
+          new Date(response.data.arrivalTime).setHours(
+            new Date(response.data.arrivalTime).getHours() + 7,
+          ),
+        )
+        Alert.alert(translate("bookingSuccessTitle"), translate("bookingSuccess"))
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions(() => ({
+    getSlotBooking: flow(function* () {
+      let response = yield api.booking.getSlotBooking()
+      if (response.kind === "unauthorized") {
+        yield api.auth.postRefreshToken()
+        response = yield api.booking.getSlotBooking()
+      }
+      if (response.kind === "ok") {
+        console.log(JSON.stringify(response))
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
+  }))
+  .actions((store) => ({
+    getParkingSlotFee: function (slotId: string) {
+      const slotVehicleTypeId = store.slotInfo.find((slot) => slot.id === slotId)?.typeId
+      const vehicleTypeInfo = store.vehicleType.find((type) => type.id === slotVehicleTypeId)
+      return {
+        parkingFee: vehicleTypeInfo?.parkingFee,
+        slotBookingFee: vehicleTypeInfo?.slotBookingFee,
+      }
+    },
+  }))
+  .actions((store) => ({
+    getSuitableBookingVehicle: flow(function* (slotId: string) {
+      const slotVehicleTypeId = store.slotInfo.find((slot) => slot.id === slotId)?.typeId
+      const suitableVehicle = store.vehicle.filter(
+        (vehicle) => vehicle.type.id === slotVehicleTypeId,
+      )
+      return suitableVehicle
+    }),
+  }))
   .views((store) => ({
     get isLoggedIn() {
       return store.userId !== null
@@ -451,6 +530,13 @@ export const RootStoreModel = types
     get myParkingVehicle() {
       if (store.parkingTicket.length && store.parkingTicket[0].id !== null) {
         return store.parkingTicket.map(({ plateNo, id }) => ({ plateNo, id }))
+      } else {
+        return []
+      }
+    },
+    get myParkingPlateNo() {
+      if (store.parkingTicket.length && store.parkingTicket[0].id !== null) {
+        return store.parkingTicket.map(({ plateNo }) => plateNo)
       } else {
         return []
       }
