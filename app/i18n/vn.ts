@@ -113,6 +113,10 @@ const vn: Translations = {
   bookingSuccessTitle: "Đặt chỗ thành công!",
   bookingSuccess: "Yêu cầu đặt chỗ của bạn đã được tạo thành công!",
   bookingRequestSentAt: "Yêu cầu đặt chỗ được gửi lúc",
+  deleteBankAccount: "Xóa tài khoản ngân hàng",
+  deleteVehicle: "Xóa phương tiện",
+  deleteBankAccountConfirmation: "Bạn có chắc chắn muốn xóa tài khoản ngân hàng này?",
+  deleteVehicleConfirmation: "Bạn có chắc chắn muốn xóa phương tiện này?",
 }
 
 export default vn

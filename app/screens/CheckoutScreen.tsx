@@ -13,6 +13,7 @@ import { Text, Icon, VerticalSeparator } from "app/components"
 
 // hooks
 import { useStores } from "app/models"
+import database from "@react-native-firebase/database"
 
 // themes
 import { appStyle, typography, colors } from "app/theme"
@@ -41,6 +42,29 @@ export const CheckoutScreen: FC<CheckoutScreenProps> = observer(function Checkou
     setSelectedPlateNo(value.plateNo)
     setTicketId(value.id)
   }
+
+  useEffect(() => {
+    const checkoutStatusRef = database()
+      .ref("/checkOutStatus")
+      .on("value", (snapshot) => {
+        if (snapshot.val()) {
+          rootStore.setProp("checkOutStatus", snapshot.val())
+        }
+      })
+
+    const checkInStatusRef = database()
+      .ref("/checkInStatus")
+      .on("value", (snapshot) => {
+        if (snapshot.val()) {
+          rootStore.setProp("checkInStatus", snapshot.val())
+        }
+      })
+
+    return () => {
+      database().ref("/checkOutStatus").off("value", checkoutStatusRef)
+      database().ref("/checkInStatus").off("value", checkInStatusRef)
+    }
+  }, [])
 
   useEffect(() => {
     if (rootStore.myParkingVehicle.length >= 1) {

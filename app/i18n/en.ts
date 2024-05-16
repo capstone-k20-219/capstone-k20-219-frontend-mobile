@@ -110,6 +110,10 @@ const en = {
   bookingSuccessTitle: "Booking success!",
   bookingSuccess: "Your booking has been successfully created!",
   bookingRequestSentAt: "Booking request sent at",
+  deleteBankAccount: "Delete bank account",
+  deleteVehicle: "Delete vehicle",
+  deleteBankAccountConfirmation: "Are you sure you want to delete this bank account?",
+  deleteVehicleConfirmation: "Are you sure you want to delete this vehicle?",
 }
 
 export default en

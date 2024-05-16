@@ -12,6 +12,7 @@ import { ParkingLotMap, CountDownTimer } from "app/components"
 // hooks
 import { useStores } from "app/models"
 import { useFocusEffect } from "@react-navigation/native"
+import database from "@react-native-firebase/database"
 
 // themes
 import { appStyle } from "app/theme"
@@ -35,6 +36,29 @@ export const BookingScreen: FC<BookingScreenProps> = observer(function BookingSc
       }
     }, [rootStore.getSlotBookingStatus, rootStore.postSlotBookingStatus, rootStore.checkInStatus]),
   )
+
+  useEffect(() => {
+    const checkoutStatusRef = database()
+      .ref("/checkOutStatus")
+      .on("value", (snapshot) => {
+        if (snapshot.val()) {
+          rootStore.setProp("checkOutStatus", snapshot.val())
+        }
+      })
+
+    const checkInStatusRef = database()
+      .ref("/checkInStatus")
+      .on("value", (snapshot) => {
+        if (snapshot.val()) {
+          rootStore.setProp("checkInStatus", snapshot.val())
+        }
+      })
+
+    return () => {
+      database().ref("/checkOutStatus").off("value", checkoutStatusRef)
+      database().ref("/checkInStatus").off("value", checkInStatusRef)
+    }
+  }, [])
 
   useEffect(() => {
     if (rootStore.checkInStatus) {

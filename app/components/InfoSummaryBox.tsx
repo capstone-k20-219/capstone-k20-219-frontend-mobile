@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 
 // modules
 import { StyleProp, TextStyle, View, ViewStyle, TouchableOpacity, ImageStyle } from "react-native"
@@ -7,6 +7,8 @@ import { observer } from "mobx-react-lite"
 // components
 import { Text } from "app/components/Text"
 import { IconTypes, Icon } from "app/components/Icon"
+import { DeleteBankAccountModal } from "./DeleteBankAccountModal"
+import { DeleteVehicleModal } from "./DeleteVehicleModal"
 
 // themes
 import { colors, typography } from "app/theme"
@@ -16,9 +18,6 @@ import { TxKeyPath } from "app/i18n"
 
 // constants
 import { sizes } from "app/constants"
-
-// hooks
-import { useStores } from "app/models"
 
 export interface InfoSummaryBoxProps {
   style?: StyleProp<ViewStyle>
@@ -54,13 +53,14 @@ export const InfoSummaryBox = observer(function InfoSummaryBox(props: InfoSummar
     type,
     id,
   } = props
-  const rootStore = useStores()
+  const [isBankOpen, setIsBankOpen] = useState(false)
+  const [isVehicleOpen, setIsVehicleOpen] = useState(false)
 
-  const handleDeleteOnPress = () => {
+  const handleOpenModalOnPress = () => {
     if (type === "bank") {
-      rootStore.deleteBankAccount({ bank: title, accountNo })
+      setIsBankOpen(true)
     } else {
-      rootStore.deleteVehicle(id)
+      setIsVehicleOpen(true)
     }
   }
 
@@ -71,9 +71,24 @@ export const InfoSummaryBox = observer(function InfoSummaryBox(props: InfoSummar
         <Text style={[$title, titleStyle]} tx={titleTx} text={title} />
         <Text style={[$label, labelStyle]} tx={labelTx} text={label} />
       </View>
-      <TouchableOpacity activeOpacity={activeOpacity} onPress={handleDeleteOnPress}>
+      <TouchableOpacity activeOpacity={activeOpacity} onPress={handleOpenModalOnPress}>
         <Icon style={[$rightIcon, rightIconStyle]} icon="delete" />
       </TouchableOpacity>
+      <DeleteBankAccountModal
+        cancelButtonTitleTx="cancel"
+        actionButtonTitleTx="yes"
+        visibility={isBankOpen}
+        setVisibility={setIsBankOpen}
+        title={title}
+        bankAccount={accountNo}
+      />
+      <DeleteVehicleModal
+        cancelButtonTitleTx="cancel"
+        actionButtonTitleTx="yes"
+        visibility={isVehicleOpen}
+        setVisibility={setIsVehicleOpen}
+        id={id}
+      />
     </View>
   )
 })
