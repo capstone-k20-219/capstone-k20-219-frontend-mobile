@@ -568,6 +568,13 @@ export const RootStoreModel = types
       return suitableVehicle
     }),
   }))
+  .actions((store) => ({
+    getSuitableParkingTicketId: flow(function* (vehicleId: number) {
+      const plateNo = store.vehicle.find((vehicle) => vehicle.id === vehicleId)?.plateNo
+      const suitableParkingTicket = store.parkingTicket.find((ticket) => ticket.plateNo === plateNo)
+      return suitableParkingTicket.id
+    }),
+  }))
   .views((store) => ({
     get isLoggedIn() {
       return store.userId !== null

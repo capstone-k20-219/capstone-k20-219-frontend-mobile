@@ -34,20 +34,20 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
   const { handleSubmit, control, setValue, getValues } = useForm<ServiceBookingInfo>({
     defaultValues: {
       serviceId: [],
-      ticketId: "",
       vehicleId: 0,
     },
   })
 
-  const handleSubmitOnPress = (data: ServiceBookingInfo) => {
-    console.log(JSON.stringify(rootStore.parkingTicket[0]))
+  const handleSubmitOnPress = async (data: ServiceBookingInfo) => {
     if (data.serviceId.length === 0) {
       Alert.alert("Error", "Please select at least one service")
     } else {
+      const ticketId = await rootStore.getSuitableParkingTicketId(data.vehicleId)
       data.serviceId.forEach((serviceId) => {
         rootStore.postServiceBooking({
-          ticketId: data.ticketId,
+          ticketId,
           serviceId,
+          vehicleId: data.vehicleId,
         })
       })
       Alert.alert("Success", "Your services has been booked successfully")
@@ -78,7 +78,7 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
         )}
       </View>
       <View style={appStyle.maxHeightHalfScreen}>
-        {rootStore.service.length && rootStore.service[0].id ? (
+        {rootStore.service.length && rootStore.service[0].id && getValues("vehicleId") !== 0 ? (
           <ScrollView contentContainerStyle={$scrollViewContainer}>
             {rootStore.service.map((value, index) => (
               <ServiceBox
@@ -96,7 +96,7 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
           <Text style={$noServiceText} tx="noAvailableService" />
         )}
       </View>
-      {rootStore.service.length && rootStore.service[0].id ? (
+      {rootStore.service.length && rootStore.service[0].id && getValues("vehicleId") !== 0 ? (
         <View style={$footerContainer}>
           <VerticalSeparator color={colors.palette.neutral400} />
           <PrimaryButton titleTx="book" onPress={handleSubmit(handleSubmitOnPress)} />

@@ -5,7 +5,7 @@ export interface SlotBookingInfo {
 }
 
 export interface ServiceBookingInfo {
-  ticketId: string
+  ticketId?: string
   serviceId: string[]
   vehicleId?: number
 }
