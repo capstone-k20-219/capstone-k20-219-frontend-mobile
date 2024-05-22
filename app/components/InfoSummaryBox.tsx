@@ -9,6 +9,7 @@ import { Text } from "app/components/Text"
 import { IconTypes, Icon } from "app/components/Icon"
 import { DeleteBankAccountModal } from "./DeleteBankAccountModal"
 import { DeleteVehicleModal } from "./DeleteVehicleModal"
+import { MessageModal } from "./MessageModal"
 
 // themes
 import { colors, typography } from "app/theme"
@@ -18,6 +19,9 @@ import { TxKeyPath } from "app/i18n"
 
 // constants
 import { sizes } from "app/constants"
+
+// hooks
+import { useStores } from "app/models"
 
 export interface InfoSummaryBoxProps {
   style?: StyleProp<ViewStyle>
@@ -55,12 +59,17 @@ export const InfoSummaryBox = observer(function InfoSummaryBox(props: InfoSummar
   } = props
   const [isBankOpen, setIsBankOpen] = useState(false)
   const [isVehicleOpen, setIsVehicleOpen] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const rootStore = useStores()
+  const parkingPlateNo = rootStore.myParkingPlateNo
 
   const handleOpenModalOnPress = () => {
     if (type === "bank") {
       setIsBankOpen(true)
     } else {
-      setIsVehicleOpen(true)
+      if (!parkingPlateNo.includes(title)) setIsVehicleOpen(true)
+      else setIsError(true)
+      // else Alert.alert(translate("deleteParkingVehicleWarningTitle"), translate("deleteParkingVehicleWarning"))
     }
   }
 
@@ -88,6 +97,13 @@ export const InfoSummaryBox = observer(function InfoSummaryBox(props: InfoSummar
         visibility={isVehicleOpen}
         setVisibility={setIsVehicleOpen}
         id={id}
+      />
+      <MessageModal
+        visibility={isError}
+        setVisibility={setIsError}
+        titleTx="deleteParkingVehicleWarningTitle"
+        contentTx="deleteParkingVehicleWarning"
+        buttonTx="ok"
       />
     </View>
   )

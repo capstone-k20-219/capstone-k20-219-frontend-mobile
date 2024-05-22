@@ -1,8 +1,8 @@
-import React, { FC, useState } from "react"
+import React, { FC, useEffect, useState } from "react"
 
 // modules
 import { observer } from "mobx-react-lite"
-import { ViewStyle, View, TextStyle, ScrollView, ImageStyle, Alert } from "react-native"
+import { ViewStyle, View, TextStyle, ScrollView, ImageStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
 import { SafeAreaView } from "react-native-safe-area-context"
 
@@ -14,10 +14,12 @@ import {
   PrimaryButton,
   VerticalSeparator,
   ServiceBox,
+  MessageModal,
+  ConfirmBookingModal,
 } from "app/components"
 
 // hooks
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { useStores } from "app/models"
 
 // themes
@@ -31,6 +33,9 @@ interface ServiceScreenProps extends AppStackScreenProps<"Service"> {}
 export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceScreen() {
   const rootStore = useStores()
   const [count, setCount] = useState(0)
+  const [isServiceNotChosen, setIsServiceNotChosen] = useState(false)
+  const [isServiceBooking, setIsServiceBooking] = useState(false)
+  const [isServiceBookingSuccess, setIsServiceBookingSuccess] = useState(false)
   const { handleSubmit, control, setValue, getValues } = useForm<ServiceBookingInfo>({
     defaultValues: {
       serviceId: [],
@@ -38,21 +43,27 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
     },
   })
 
-  const handleSubmitOnPress = async (data: ServiceBookingInfo) => {
+  const watchField = useWatch({ control, name: "vehicleId" })
+
+  const handleSubmitOnPress = (data: ServiceBookingInfo) => {
     if (data.serviceId.length === 0) {
-      Alert.alert("Error", "Please select at least one service")
+      setIsServiceNotChosen(true)
     } else {
-      const ticketId = await rootStore.getSuitableParkingTicketId(data.vehicleId)
-      data.serviceId.forEach((serviceId) => {
-        rootStore.postServiceBooking({
-          ticketId,
-          serviceId,
-          vehicleId: data.vehicleId,
-        })
-      })
-      Alert.alert("Success", "Your services has been booked successfully")
+      setIsServiceBooking(true)
     }
   }
+
+  useEffect(() => {
+    setCount(0)
+    setValue("serviceId", [])
+  }, [watchField])
+
+  useEffect(() => {
+    if (rootStore.postServiceBookingStatus === "done") {
+      setIsServiceBookingSuccess(true)
+      rootStore.setProp("postServiceBookingStatus", null)
+    }
+  }, [rootStore.postServiceBookingStatus])
 
   return (
     <SafeAreaView style={appStyle.rootContainer}>
@@ -64,7 +75,7 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
           isOutline={true}
           labelTx="chooseYourVehicle"
           labelStyle={$label}
-          data={rootStore.vehicle}
+          data={rootStore.myParkingVehicleInfo}
           type="vehicle"
         />
       </View>
@@ -82,7 +93,7 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
           <ScrollView contentContainerStyle={$scrollViewContainer}>
             {rootStore.service.map((value, index) => (
               <ServiceBox
-                key={index}
+                key={`${value.id}-${index}`}
                 serviceName={value.name}
                 price={value.prices[0].unitPrice}
                 setCounter={setCount}
@@ -102,6 +113,27 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
           <PrimaryButton titleTx="book" onPress={handleSubmit(handleSubmitOnPress)} />
         </View>
       ) : null}
+      <MessageModal
+        titleTx="noServiceChosen"
+        contentTx="pleaseSelectService"
+        visibility={isServiceNotChosen}
+        setVisibility={setIsServiceNotChosen}
+        buttonTx="ok"
+      />
+      <MessageModal
+        visibility={isServiceBookingSuccess}
+        setVisibility={setIsServiceBookingSuccess}
+        titleTx="bookingServiceSuccessTitle"
+        contentTx="bookingServiceSuccess"
+        buttonTx="ok"
+      />
+      <ConfirmBookingModal
+        actionButtonTitleTx="book"
+        cancelButtonTitleTx="cancel"
+        bookingData={getValues()}
+        visibility={isServiceBooking}
+        setVisibility={setIsServiceBooking}
+      />
     </SafeAreaView>
   )
 })

@@ -1,12 +1,13 @@
 import React, { useState } from "react"
 
 // modules
-import { Alert, StyleProp, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
+import { StyleProp, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 
 // components
 import { Text } from "app/components/Text"
 import { BookingSlotModal } from "./BookingSlotModal"
+import { MessageModal } from "./MessageModal"
 
 // hooks
 import { useStores } from "app/models"
@@ -33,22 +34,17 @@ export const Slot = observer(function Slot(props: SlotProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const rootStore = useStores()
   const [suitableVehicle, setSuitableVehicle] = useState([])
+  const [isParking, setIsParking] = useState(false)
+  const [isNotExist, setIsNotExist] = useState(false)
+  const [isUnavailable, setIsUnavailable] = useState(false)
   const slotOffset = rootStore.slotOffset
 
   const handleOpenModalOnPress = () => {
     if (suitableVehicle.length) {
       setIsModalOpen(true)
     } else {
-      Alert.alert(
-        translate("noSuitableVehicleTitle"),
-        translate("noSuitableVehicle", {
-          vehicleType: translate(
-            slotInfo.typeId.toLocaleLowerCase() as TxKeyPath,
-          ).toLocaleLowerCase(),
-        }),
-        [{ text: "OK" }],
-        { cancelable: false },
-      )
+      if (!isParking) setIsNotExist(true)
+      else setIsUnavailable(true)
     }
   }
 
@@ -61,10 +57,11 @@ export const Slot = observer(function Slot(props: SlotProps) {
         interactiveMode
       ) {
         rootStore.getSuitableBookingVehicle(slotInfo.id).then((res) => {
-          setSuitableVehicle(res)
+          setSuitableVehicle(res.vehicleList)
+          setIsParking(res.isParking)
         })
       }
-    }, [rootStore.postVehicleStatus, rootStore.deleteVehicleStatus, rootStore.vehicle]),
+    }, [rootStore.vehicle]),
   )
 
   return (
@@ -83,6 +80,30 @@ export const Slot = observer(function Slot(props: SlotProps) {
         setVisibility={setIsModalOpen}
         parkingSlotId={slotInfo.id}
         vehicleData={suitableVehicle}
+      />
+      <MessageModal
+        visibility={isNotExist}
+        setVisibility={setIsNotExist}
+        titleTx="noSuitableVehicleTitle"
+        contentTx="noSuitableVehicle"
+        buttonTx="ok"
+        contentParams={{
+          vehicleType: translate(
+            slotInfo.typeId.toLocaleLowerCase() as TxKeyPath,
+          ).toLocaleLowerCase(),
+        }}
+      />
+      <MessageModal
+        visibility={isUnavailable}
+        setVisibility={setIsUnavailable}
+        titleTx="noSuitableVehicleTitle"
+        contentTx="noAvailableVehicle"
+        buttonTx="ok"
+        contentParams={{
+          vehicleType: translate(
+            slotInfo.typeId.toLocaleLowerCase() as TxKeyPath,
+          ).toLocaleLowerCase(),
+        }}
       />
     </TouchableOpacity>
   )

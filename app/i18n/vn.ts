@@ -102,21 +102,30 @@ const vn: Translations = {
   feedbackService: "Phản hồi dịch vụ",
   serviceName: "Tên dịch vụ",
   feedbackPlaceholder: "Nhập phản hồi của bạn...",
-  noAvailableService:
-    "Không có dịch vụ nào được cung cấp hoặc phương tiện của bạn chưa vào bãi xe.",
+  noAvailableService: "Không tìm thấy dịch vụ nào khả dụng.",
   parkingFeePerHour: "Phí đỗ xe mỗi giờ",
   bookingExpiredAt: "Đặt chỗ hết hạn vào",
-  noSuitableVehicleTitle: "Không tìm thấy phương tiện phù hợp!",
+  noSuitableVehicleTitle: "Không tìm thấy phương tiện phù hợp",
   noSuitableVehicle:
     "Bạn không có {{vehicleType}} trong danh sách phương tiện của mình, vui lòng thêm {{vehicleType}} vào danh sách phương tiện để đặt chỗ này.",
+  noAvailableVehicle: "Tất cả {{vehicleType}} của bạn đã được đỗ.",
   invalidTimePeriod: "Thời gian đặt chỗ phải từ {{fromTime}} đến {{toTime}}",
   bookingSuccessTitle: "Đặt chỗ thành công!",
   bookingSuccess: "Yêu cầu đặt chỗ của bạn đã được tạo thành công!",
+  bookingServiceSuccess: "Yêu cầu dịch vụ của bạn đã được tạo thành công!",
+  bookingServiceSuccessTitle: "Đặt dịch vụ thành công!",
   bookingRequestSentAt: "Yêu cầu đặt chỗ được gửi lúc",
   deleteBankAccount: "Xóa tài khoản ngân hàng",
   deleteVehicle: "Xóa phương tiện",
   deleteBankAccountConfirmation: "Bạn có chắc chắn muốn xóa tài khoản ngân hàng này?",
   deleteVehicleConfirmation: "Bạn có chắc chắn muốn xóa phương tiện này?",
+  deleteParkingVehicleWarning: "Bạn không thể xóa phương tiện này vì nó đang đỗ trong bãi đỗ xe.",
+  deleteParkingVehicleWarningTitle: "Xóa phương tiện đang đỗ!",
+  ok: "OK",
+  noServiceChosen: "Chưa chọn dịch vụ",
+  pleaseSelectService: "Vui lòng chọn ít nhất 1 dịch vụ",
+  bookingService: "Đặt dịch vụ",
+  bookingServiceConfirmation: "Bạn có chắc chắn muốn đặt dịch vụ?",
 }
 
 export default vn

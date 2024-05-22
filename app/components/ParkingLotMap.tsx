@@ -31,7 +31,7 @@ export const ParkingLotMap = observer(function ParkingLotMap(props: ParkingLotMa
       if (!interactiveMode && rootStore.firstParkingSlotCoordinate) {
         const firstParkingSlot = rootStore.firstParkingSlotCoordinate
         outerScrollViewRef.current.scrollTo({ y: firstParkingSlot.y_start - 200, animated: true })
-        innerScrollViewRef.current.scrollTo({ x: firstParkingSlot.x_start - 100, animated: true })
+        innerScrollViewRef.current.scrollTo({ x: firstParkingSlot.x_start - 150, animated: true })
       }
     }, []),
   )

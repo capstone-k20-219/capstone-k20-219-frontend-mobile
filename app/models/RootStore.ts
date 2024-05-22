@@ -153,6 +153,7 @@ export const RootStoreModel = types
     deleteVehicleStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
     getSlotBookingStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
     postSlotBookingStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
+    postServiceBookingStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
   })
   .actions(withSetPropAction)
   .actions((store) => ({
@@ -278,6 +279,7 @@ export const RootStoreModel = types
         store.setProp("deleteVehicleStatus", null)
         store.setProp("getSlotBookingStatus", null)
         store.setProp("postSlotBookingStatus", null)
+        store.setProp("postServiceBookingStatus", null)
         api.apisauce.setHeader("Authorization", "")
         yield remove("refresh_token")
       } else {
@@ -562,10 +564,16 @@ export const RootStoreModel = types
   .actions((store) => ({
     getSuitableBookingVehicle: flow(function* (slotId: string) {
       const slotVehicleTypeId = store.slotInfo.find((slot) => slot.id === slotId)?.typeId
-      const suitableVehicle = store.vehicle.filter(
-        (vehicle) => vehicle.type.id === slotVehicleTypeId,
+      const parkingPlateNo = store.parkingTicket.map(({ plateNo }) => plateNo)
+      const parkingVehicle = store.vehicle.filter(
+        (vehicle) =>
+          parkingPlateNo.includes(vehicle.plateNo) && vehicle.type.id === slotVehicleTypeId,
       )
-      return suitableVehicle
+      const suitableVehicle = store.vehicle.filter(
+        (vehicle) =>
+          vehicle.type.id === slotVehicleTypeId && !parkingPlateNo.includes(vehicle.plateNo),
+      )
+      return { vehicleList: suitableVehicle, isParking: parkingVehicle.length > 0 }
     }),
   }))
   .actions((store) => ({
@@ -619,6 +627,14 @@ export const RootStoreModel = types
         return store.vehicle.find((vehicle) => vehicle.id === store.slotBooking.vehicleId)?.plateNo
       } else {
         return ""
+      }
+    },
+    get myParkingVehicleInfo() {
+      if (store.parkingTicket.length && store.parkingTicket[0].id !== null) {
+        const parkingPlateNo = store.parkingTicket.map(({ plateNo }) => plateNo)
+        return store.vehicle.filter((vehicle) => parkingPlateNo.includes(vehicle.plateNo))
+      } else {
+        return []
       }
     },
   }))
