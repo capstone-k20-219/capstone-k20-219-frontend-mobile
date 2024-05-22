@@ -22,7 +22,7 @@ export const MapScreen: FC<MapScreenProps> = observer(function MapScreen() {
   const rootStore = useStores()
 
   useEffect(() => {
-    const checkoutStatusRef = database()
+    const checkOutStatusRef = database()
       .ref("/checkOutStatus")
       .on("value", (snapshot) => {
         if (snapshot.val()) {
@@ -39,7 +39,7 @@ export const MapScreen: FC<MapScreenProps> = observer(function MapScreen() {
       })
 
     return () => {
-      database().ref("/checkOutStatus").off("value", checkoutStatusRef)
+      database().ref("/checkOutStatus").off("value", checkOutStatusRef)
       database().ref("/checkInStatus").off("value", checkInStatusRef)
     }
   }, [])

@@ -44,7 +44,7 @@ export const CheckoutScreen: FC<CheckoutScreenProps> = observer(function Checkou
   }
 
   useEffect(() => {
-    const checkoutStatusRef = database()
+    const checkOutStatusRef = database()
       .ref("/checkOutStatus")
       .on("value", (snapshot) => {
         if (snapshot.val()) {
@@ -61,7 +61,7 @@ export const CheckoutScreen: FC<CheckoutScreenProps> = observer(function Checkou
       })
 
     return () => {
-      database().ref("/checkOutStatus").off("value", checkoutStatusRef)
+      database().ref("/checkOutStatus").off("value", checkOutStatusRef)
       database().ref("/checkInStatus").off("value", checkInStatusRef)
     }
   }, [])
