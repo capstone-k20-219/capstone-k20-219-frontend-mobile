@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 
 // modules
 import { StyleProp, TextStyle, View, ViewStyle } from "react-native"
@@ -11,6 +11,7 @@ import { SecondaryButton } from "app/components/SecondaryButton"
 import { VerticalSeparator } from "app/components/VerticalSeparator"
 import { Input } from "app/components/Input"
 import { DropDownList } from "app/components/DropDownList"
+import { MessageModal } from "./MessageModal"
 
 // themes
 import { appStyle, colors, typography } from "app/theme"
@@ -39,6 +40,9 @@ export interface AddVehicleModalProps {
 export const AddVehicleModal = observer(function AddVehicleModal(props: AddVehicleModalProps) {
   const { style, actionButtonTitleTx, cancelButtonTitleTx, visibility, setVisibility } = props
   const rootStore = useStores()
+  const [emptyInput, setEmptyInput] = useState(false)
+  const [invalidPlateNo, setInvalidPlateNo] = useState(false)
+  const regex = /^(1[1-2]|1[4-9]|[2-9][0-9])[A-Z][0-9A-Z]{0,2}-[0-9]{4,5}$/
 
   const { handleSubmit, control, setValue, reset } = useForm<VehicleInfo>({
     defaultValues: {
@@ -52,9 +56,15 @@ export const AddVehicleModal = observer(function AddVehicleModal(props: AddVehic
   }
 
   const handleSubmitOnPress = (data: VehicleInfo) => {
-    setVisibility(false)
-    rootStore.postVehicle(data)
-    reset()
+    if (data.typeId === "" || data.plateNo === "") setEmptyInput(true)
+    else {
+      if (!regex.test(data.plateNo)) setInvalidPlateNo(true)
+      else {
+        setVisibility(false)
+        rootStore.postVehicle(data)
+        reset()
+      }
+    }
   }
 
   return (
@@ -69,7 +79,6 @@ export const AddVehicleModal = observer(function AddVehicleModal(props: AddVehic
         <Text style={$title} tx="addNewVehicle" />
         <VerticalSeparator />
         <View style={$inputContainer}>
-          <Input control={control} controlName="plateNo" labelTx="vehicleNumber" isOutLine={true} />
           <DropDownList
             control={control}
             controlName="typeId"
@@ -79,6 +88,7 @@ export const AddVehicleModal = observer(function AddVehicleModal(props: AddVehic
             data={rootStore.vehicleType}
             type="vehicleType"
           />
+          <Input control={control} controlName="plateNo" labelTx="vehicleNumber" isOutLine={true} />
         </View>
         <View style={$buttonContainer}>
           <SecondaryButton
@@ -94,6 +104,20 @@ export const AddVehicleModal = observer(function AddVehicleModal(props: AddVehic
           />
         </View>
       </View>
+      <MessageModal
+        visibility={emptyInput}
+        setVisibility={setEmptyInput}
+        titleTx="emptyInputTitle"
+        contentTx="emptyInputMessage"
+        buttonTx="ok"
+      />
+      <MessageModal
+        visibility={invalidPlateNo}
+        setVisibility={setInvalidPlateNo}
+        titleTx="invalidPlateNumberTitle"
+        contentTx="invalidPlateNumberMessage"
+        buttonTx="ok"
+      />
     </Modal>
   )
 })

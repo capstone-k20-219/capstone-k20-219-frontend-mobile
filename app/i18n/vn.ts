@@ -126,6 +126,10 @@ const vn: Translations = {
   pleaseSelectService: "Vui lòng chọn ít nhất 1 dịch vụ",
   bookingService: "Đặt dịch vụ",
   bookingServiceConfirmation: "Bạn có chắc chắn muốn đặt dịch vụ?",
+  emptyInputTitle: "Dữ liệu trống",
+  emptyInputMessage: "Vui lòng điền đầy đủ thông tin trước khi xác nhận!",
+  invalidPlateNumberTitle: "Biển số không hợp lệ",
+  invalidPlateNumberMessage: "Biển số phải có định dạng như ví dụ sau: 98K1-02897",
 }
 
 export default vn

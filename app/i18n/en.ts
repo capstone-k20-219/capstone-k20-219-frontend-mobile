@@ -124,6 +124,11 @@ const en = {
   pleaseSelectService: "Please select at least 1 service",
   bookingService: "Booking service",
   bookingServiceConfirmation: "Are you sure you want to book service?",
+  emptyInputTitle: "Empty input",
+  invalidPlateNumberTitle: "Invalid plate number",
+  invalidPlateNumberMessage:
+    "Plate number must be in the format like the following example: 98K1-02897",
+  emptyInputMessage: "Please fill in all the required fields",
 }
 
 export default en
