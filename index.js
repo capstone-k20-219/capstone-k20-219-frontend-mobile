@@ -5,10 +5,11 @@
 import App from "./app/app.tsx"
 import React from "react"
 import { AppRegistry } from "react-native"
-import RNBootSplash from "react-native-bootsplash"
+// import RNBootSplash from "react-native-bootsplash"
+import SplashScreen from "react-native-splash-screen"
 
 function IgniteApp() {
-  return <App hideSplashScreen={RNBootSplash.hide} />
+  return <App hideSplashScreen={SplashScreen.hide} />
 }
 
 AppRegistry.registerComponent("CapstoneProjectK20219FrontendMobile", () => IgniteApp)

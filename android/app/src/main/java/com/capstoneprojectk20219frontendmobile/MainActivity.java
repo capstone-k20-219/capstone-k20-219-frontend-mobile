@@ -7,7 +7,9 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
-import com.zoontek.rnbootsplash.RNBootSplash;
+// import com.zoontek.rnbootsplash.RNBootSplash;
+import org.devio.rn.splashscreen.SplashScreen; // here
+
 
 import expo.modules.ReactActivityDelegateWrapper;
 
@@ -41,7 +43,7 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    RNBootSplash.init(this);            // <- initialize the splash screen
+    SplashScreen.show(this);             // <- initialize the splash screen
     super.onCreate(null);               // or super.onCreate(savedInstanceState) when not using react-native-screens
   }
 
