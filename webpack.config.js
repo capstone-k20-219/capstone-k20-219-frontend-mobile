@@ -11,6 +11,11 @@ module.exports = async function (env, argv) {
     config.devServer.compress = false
   }
 
+  config.watchOptions = {
+    ...config.watchOptions,
+    ignored: "**/node_modules/**",
+  }
+
   // Or prevent minimizing the bundle when you build.
   // if (config.mode === "production") {
   //   config.optimization.minimize = false
