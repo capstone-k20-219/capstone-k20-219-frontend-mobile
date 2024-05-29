@@ -115,7 +115,7 @@ const $container: ViewStyle = {
   alignItems: "center",
   borderWidth: 1,
   borderColor: colors.palette.neutral300,
-  columnGap: 21,
+  columnGap: 15,
 }
 
 const $textContainer: ViewStyle = {

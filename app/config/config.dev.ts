@@ -6,5 +6,5 @@
  * https://reactnative.dev/docs/security#storing-sensitive-info
  */
 export default {
-  API_URL: "http://172.30.148.189:9001",
+  API_URL: "https://capstone-k20-219-be.onrender.com",
 }

@@ -88,31 +88,37 @@ export const ServiceScreen: FC<ServiceScreenProps> = observer(function ServiceSc
           </View>
         )}
       </View>
-      <View style={appStyle.maxHeightHalfScreen}>
-        {rootStore.service.length && rootStore.service[0].id && getValues("vehicleId") !== 0 ? (
-          <ScrollView contentContainerStyle={$scrollViewContainer}>
-            {rootStore.service.map((value, index) => (
-              <ServiceBox
-                key={`${value.id}-${index}`}
-                serviceName={value.name}
-                price={value.prices[0].unitPrice}
-                setCounter={setCount}
-                setValue={setValue}
-                getValues={getValues}
-                serviceId={value.id}
-              />
-            ))}
-          </ScrollView>
-        ) : (
-          <Text style={$noServiceText} tx="noAvailableService" />
-        )}
-      </View>
-      {rootStore.service.length && rootStore.service[0].id && getValues("vehicleId") !== 0 ? (
-        <View style={$footerContainer}>
-          <VerticalSeparator color={colors.palette.neutral400} />
-          <PrimaryButton titleTx="book" onPress={handleSubmit(handleSubmitOnPress)} />
+      <ScrollView
+        contentContainerStyle={appStyle.flexGrow1}
+        nestedScrollEnabled={true}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={appStyle.maxHeightHalfScreen}>
+          {rootStore.service.length && rootStore.service[0].id && getValues("vehicleId") !== 0 ? (
+            <ScrollView contentContainerStyle={$scrollViewContainer} nestedScrollEnabled={true}>
+              {rootStore.service.map((value, index) => (
+                <ServiceBox
+                  key={`${value.id}-${index}-${rootStore.getVehicleTypeId(getValues("vehicleId"))}`}
+                  serviceName={value.name}
+                  price={value.prices[0].unitPrice}
+                  setCounter={setCount}
+                  setValue={setValue}
+                  getValues={getValues}
+                  serviceId={value.id}
+                />
+              ))}
+            </ScrollView>
+          ) : (
+            <Text style={$noServiceText} tx="noAvailableService" />
+          )}
         </View>
-      ) : null}
+        {rootStore.service.length && rootStore.service[0].id && getValues("vehicleId") !== 0 ? (
+          <View style={$footerContainer}>
+            <VerticalSeparator color={colors.palette.neutral400} />
+            <PrimaryButton titleTx="book" onPress={handleSubmit(handleSubmitOnPress)} />
+          </View>
+        ) : null}
+      </ScrollView>
       <MessageModal
         titleTx="noServiceChosen"
         contentTx="pleaseSelectService"

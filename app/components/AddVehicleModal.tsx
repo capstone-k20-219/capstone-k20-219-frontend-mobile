@@ -42,7 +42,7 @@ export const AddVehicleModal = observer(function AddVehicleModal(props: AddVehic
   const rootStore = useStores()
   const [emptyInput, setEmptyInput] = useState(false)
   const [invalidPlateNo, setInvalidPlateNo] = useState(false)
-  const regex = /^(1[1-2]|1[4-9]|[2-9][0-9])[A-Z][0-9A-Z]{0,2}-[0-9]{4,5}$/
+  const regex = /^(1[1-2]|1[4-9]|[2-9][0-9])[A-Z]([0-9A-Z]|[A-Z][0-9])?-[0-9]{4,5}$/
 
   const { handleSubmit, control, setValue, reset } = useForm<VehicleInfo>({
     defaultValues: {

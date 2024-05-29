@@ -269,7 +269,7 @@ export const RootStoreModel = types
         store.setProp("userInfo", {})
         store.setProp("vehicle", [{}])
         store.setProp("vehicleType", [{}])
-        store.setProp("slotInfo", [{}])
+        // store.setProp("slotInfo", [{}])
         store.setProp("service", [{}])
         store.setProp("parkingTicket", [{}])
         store.setProp("slotBooking", {})
@@ -582,6 +582,11 @@ export const RootStoreModel = types
       const suitableParkingTicket = store.parkingTicket.find((ticket) => ticket.plateNo === plateNo)
       return suitableParkingTicket.id
     }),
+  }))
+  .actions((store) => ({
+    getVehicleTypeId: function (vehicleId: number) {
+      return store.vehicle.find((vehicle) => vehicle.id === vehicleId)?.type.id
+    },
   }))
   .views((store) => ({
     get isLoggedIn() {

@@ -27,6 +27,7 @@ export interface ServiceBoxProps {
   serviceId?: string
   setValue?: UseFormSetValue<any>
   getValues?: UseFormGetValues<any>
+  defaultSelected?: boolean
 }
 
 export const ServiceBox = observer(function ServiceBox(props: ServiceBoxProps) {
@@ -51,7 +52,10 @@ export const ServiceBox = observer(function ServiceBox(props: ServiceBoxProps) {
       setValue("serviceId", [...serviceIdList, serviceId])
     } else {
       setIsSelected(false)
-      setCounter((prev) => prev - 1)
+      setCounter((prev) => {
+        if (prev === 0) return 0
+        return prev - 1
+      })
       setValue(
         "serviceId",
         serviceIdList.filter((id: string) => id !== serviceId),

@@ -171,7 +171,7 @@ const $headerContainer: ViewStyle = {
 const $headerText: TextStyle = {
   fontFamily: typography.fonts.rubik.bold,
   fontSize: 32,
-  lineHeight: 32,
+  lineHeight: 35,
   color: colors.white,
   textAlign: "center",
 }
