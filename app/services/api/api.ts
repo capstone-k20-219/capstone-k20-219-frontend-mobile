@@ -20,6 +20,7 @@ import { ServiceApi } from "../service/service"
 import { ParkingTicketApi } from "../parkingTicket/parkingTicket"
 import { BookingApi } from "../booking/booking"
 import { FirebaseApi } from "../firebase/firebase"
+import { PaymentApi } from "../payment/payment"
 
 export const DEFAULT_API_CONFIG: ApiConfig = {
   url: Config.API_URL,
@@ -41,6 +42,7 @@ export class Api {
   parkingTicket: ParkingTicketApi
   booking: BookingApi
   firebase: FirebaseApi
+  payment: PaymentApi
 
   constructor(config: ApiConfig = DEFAULT_API_CONFIG) {
     this.config = config
@@ -66,6 +68,7 @@ export class Api {
     this.parkingTicket = new ParkingTicketApi(this.apisauce)
     this.booking = new BookingApi(this.apisauce)
     this.firebase = new FirebaseApi()
+    this.payment = new PaymentApi(this.apisauce)
   }
 }
 

@@ -129,6 +129,10 @@ const en = {
   invalidPlateNumberMessage:
     "Plate number must be in the format like the following example: 98K1-02897",
   emptyInputMessage: "Please fill in all the required fields",
+  successSlotBooking: "Your slot booking is done successfully",
+  successSlotBookingTitle: "Slot booking success",
+  failSlotBooking: "Your slot booking is failed",
+  failSlotBookingTitle: "Slot booking failed",
 }
 
 export default en

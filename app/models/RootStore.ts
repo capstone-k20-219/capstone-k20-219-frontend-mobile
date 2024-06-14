@@ -34,6 +34,15 @@ const BankAccountInfo = types
   })
   .actions(withSetPropAction)
 
+const BillInfo = types
+  .model("BillInfo")
+  .props({
+    paymentIntent: types.maybeNull(types.string),
+    ephemeralKey: types.maybeNull(types.string),
+    customerId: types.maybeNull(types.string),
+  })
+  .actions(withSetPropAction)
+
 const VehicleTypeProps = types
   .model("VehicleTypeProps")
   .props({
@@ -147,6 +156,7 @@ export const RootStoreModel = types
     service: types.array(types.optional(Service, {})),
     parkingTicket: types.array(types.optional(ParkingTicket, {})),
     slotBooking: types.optional(SlotBooking, {}),
+    billInfo: types.optional(BillInfo, {}),
     checkInStatus: types.maybeNull(types.boolean),
     checkOutStatus: types.maybeNull(types.boolean),
     postVehicleStatus: types.maybeNull(types.enumeration(["loading", "done", "error"])),
@@ -587,6 +597,17 @@ export const RootStoreModel = types
     getVehicleTypeId: function (vehicleId: number) {
       return store.vehicle.find((vehicle) => vehicle.id === vehicleId)?.type.id
     },
+  }))
+  .actions((store) => ({
+    postBillInfo: flow(function* (payload: any) {
+      const response = yield api.payment.postBillInfo(payload)
+      if (response.kind === "ok") {
+        console.log(JSON.stringify(response))
+        store.setProp("billInfo", response.data)
+      } else {
+        alert(JSON.stringify(response))
+      }
+    }),
   }))
   .views((store) => ({
     get isLoggedIn() {

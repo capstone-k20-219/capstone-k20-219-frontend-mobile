@@ -18,7 +18,7 @@ import database from "@react-native-firebase/database"
 export type AppStackParamList = {
   Login: undefined
   Home: undefined
-  Payment: undefined
+  Payment: { amount: number }
   Profile: undefined
   BankAccountManager: undefined
   VehicleManager: undefined

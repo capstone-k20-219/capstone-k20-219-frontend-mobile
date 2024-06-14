@@ -130,6 +130,10 @@ const vn: Translations = {
   emptyInputMessage: "Vui lòng điền đầy đủ thông tin trước khi xác nhận!",
   invalidPlateNumberTitle: "Biển số không hợp lệ",
   invalidPlateNumberMessage: "Biển số phải có định dạng như ví dụ sau: 98K1-02897",
+  successSlotBooking: "Đặt chỗ thành công!",
+  successSlotBookingTitle: "Hoàn thành",
+  failSlotBooking: "Đặt chỗ thất bại!",
+  failSlotBookingTitle: "Thất bại",
 }
 
 export default vn

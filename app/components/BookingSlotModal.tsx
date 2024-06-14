@@ -16,6 +16,7 @@ import { DropDownList } from "app/components/DropDownList"
 // hooks
 import { useForm } from "react-hook-form"
 import { useStores } from "app/models"
+import { useStripe } from "@stripe/stripe-react-native"
 
 // themes
 import { appStyle, colors, typography } from "app/theme"
@@ -23,6 +24,8 @@ import { sizes } from "app/constants"
 
 // date-fns
 import { format } from "date-fns"
+
+// i18n
 import { translate } from "app/i18n"
 
 export interface BookingSlotModalProps {
@@ -31,6 +34,7 @@ export interface BookingSlotModalProps {
   setVisibility?: React.Dispatch<React.SetStateAction<boolean>>
   parkingSlotId?: string
   vehicleData?: any[]
+  extraFailPopup?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface FormData {
@@ -41,10 +45,18 @@ interface FormData {
 }
 
 export const BookingSlotModal = observer(function BookingSlotModal(props: BookingSlotModalProps) {
-  const { style, visibility, setVisibility, parkingSlotId = "", vehicleData } = props
+  const {
+    style,
+    visibility,
+    setVisibility,
+    parkingSlotId = "",
+    vehicleData,
+    extraFailPopup,
+  } = props
   const [date, setDate] = useState(new Date())
   const [time, setTime] = useState(new Date())
   const rootStore = useStores()
+  const { initPaymentSheet, presentPaymentSheet } = useStripe()
   const { handleSubmit, control, setValue, getValues, reset } = useForm<FormData>({
     defaultValues: {
       parkingSlotId,
@@ -54,6 +66,41 @@ export const BookingSlotModal = observer(function BookingSlotModal(props: Bookin
     },
   })
 
+  const initializePaymentSheet = async () => {
+    const { error } = await initPaymentSheet({
+      merchantDisplayName: "Pakislot",
+      customerId: rootStore.billInfo.customerId,
+      customerEphemeralKeySecret: rootStore.billInfo.ephemeralKey,
+      paymentIntentClientSecret: rootStore.billInfo.paymentIntent,
+      defaultBillingDetails: {
+        email: rootStore.userInfo.email,
+        address: { country: "VN" },
+      },
+    })
+    if (!error) {
+      const { error } = await presentPaymentSheet()
+      if (error) {
+        extraFailPopup(true)
+      } else {
+        const arrivalTime = new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate(),
+          time.getHours(),
+          time.getMinutes(),
+        )
+        rootStore.postSlotBooking({
+          slotId: getValues("parkingSlotId"),
+          vehicleId: getValues("vehicleId"),
+          arrivalTime,
+        })
+        reset()
+        setDate(new Date())
+        setTime(new Date())
+      }
+    }
+  }
+
   const handleDismissBookingModalOnPress = () => {
     setVisibility(false)
     reset()
@@ -61,23 +108,10 @@ export const BookingSlotModal = observer(function BookingSlotModal(props: Bookin
     setTime(new Date())
   }
 
-  const handleSubmitOnPress = (data: FormData) => {
+  const handleSubmitOnPress = () => {
     setVisibility(false)
-    const arrivalTime = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate(),
-      time.getHours(),
-      time.getMinutes(),
-    )
-    rootStore.postSlotBooking({
-      slotId: data.parkingSlotId,
-      vehicleId: data.vehicleId,
-      arrivalTime,
-    })
-    reset()
-    setDate(new Date())
-    setTime(new Date())
+    rootStore.postBillInfo({ amount: rootStore.getParkingSlotFee(parkingSlotId).slotBookingFee })
+    initializePaymentSheet()
   }
 
   const checkTimeInterval = (time: Date, date: Date) => {

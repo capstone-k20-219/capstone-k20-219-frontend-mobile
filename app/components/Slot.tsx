@@ -37,6 +37,7 @@ export const Slot = observer(function Slot(props: SlotProps) {
   const [isParking, setIsParking] = useState(false)
   const [isNotExist, setIsNotExist] = useState(false)
   const [isUnavailable, setIsUnavailable] = useState(false)
+  const [failBooking, setFailBooking] = useState(false)
   const slotOffset = rootStore.slotOffset
 
   const handleOpenModalOnPress = () => {
@@ -80,6 +81,7 @@ export const Slot = observer(function Slot(props: SlotProps) {
         setVisibility={setIsModalOpen}
         parkingSlotId={slotInfo.id}
         vehicleData={suitableVehicle}
+        extraFailPopup={setFailBooking}
       />
       <MessageModal
         visibility={isNotExist}
@@ -104,6 +106,13 @@ export const Slot = observer(function Slot(props: SlotProps) {
             slotInfo.typeId.toLocaleLowerCase() as TxKeyPath,
           ).toLocaleLowerCase(),
         }}
+      />
+      <MessageModal
+        visibility={failBooking}
+        setVisibility={setFailBooking}
+        titleTx="failSlotBookingTitle"
+        contentTx="failSlotBooking"
+        buttonTx="ok"
       />
     </TouchableOpacity>
   )
